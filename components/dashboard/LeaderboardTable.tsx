@@ -14,9 +14,10 @@ interface LeaderboardEntry {
     username: string;
     credits: number;
     tier: string;
-    totalAttacks: number;
-    successfulAttacks: number;
-    successRate: number;
+    stylePoints?: number;
+    totalAttacks?: number;
+    successfulAttacks?: number;
+    successRate?: number;
 }
 
 interface LeaderboardTableProps {
@@ -40,6 +41,9 @@ export function LeaderboardTable({ hackers }: LeaderboardTableProps) {
         return `#${index + 1}`;
     };
 
+    // Check if we have attack stats
+    const hasAttackStats = hackers.length > 0 && hackers[0].totalAttacks !== undefined;
+
     return (
         <Card className="bg-slate-900/50 border-slate-800">
             <CardHeader>
@@ -62,15 +66,19 @@ export function LeaderboardTable({ hackers }: LeaderboardTableProps) {
                                         CREDITS
                                     </div>
                                 </TableHead>
-                                <TableHead className="text-cyan-400 font-mono text-right">
-                                    <div className="flex items-center justify-end gap-1">
-                                        <Target className="w-3 h-3" />
-                                        ATTACKS
-                                    </div>
-                                </TableHead>
-                                <TableHead className="text-cyan-400 font-mono text-right">
-                                    SUCCESS
-                                </TableHead>
+                                {hasAttackStats && (
+                                    <>
+                                        <TableHead className="text-cyan-400 font-mono text-right">
+                                            <div className="flex items-center justify-end gap-1">
+                                                <Target className="w-3 h-3" />
+                                                ATTACKS
+                                            </div>
+                                        </TableHead>
+                                        <TableHead className="text-cyan-400 font-mono text-right">
+                                            SUCCESS
+                                        </TableHead>
+                                    </>
+                                )}
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -97,21 +105,25 @@ export function LeaderboardTable({ hackers }: LeaderboardTableProps) {
                                     <TableCell className="text-right font-mono font-bold text-cyan-400">
                                         {hacker.credits.toLocaleString()}
                                     </TableCell>
-                                    <TableCell className="text-right font-mono text-slate-400">
-                                        {hacker.successfulAttacks}/{hacker.totalAttacks}
-                                    </TableCell>
-                                    <TableCell className="text-right font-mono">
-                                        <span
-                                            className={`${hacker.successRate >= 70
-                                                    ? "text-green-400"
-                                                    : hacker.successRate >= 40
-                                                        ? "text-yellow-400"
-                                                        : "text-red-400"
-                                                }`}
-                                        >
-                                            {hacker.successRate}%
-                                        </span>
-                                    </TableCell>
+                                    {hasAttackStats && (
+                                        <>
+                                            <TableCell className="text-right font-mono text-slate-400">
+                                                {hacker.successfulAttacks}/{hacker.totalAttacks}
+                                            </TableCell>
+                                            <TableCell className="text-right font-mono">
+                                                <span
+                                                    className={`${(hacker.successRate ?? 0) >= 70
+                                                        ? "text-green-400"
+                                                        : (hacker.successRate ?? 0) >= 40
+                                                            ? "text-yellow-400"
+                                                            : "text-red-400"
+                                                        }`}
+                                                >
+                                                    {hacker.successRate}%
+                                                </span>
+                                            </TableCell>
+                                        </>
+                                    )}
                                 </TableRow>
                             ))}
                         </TableBody>
