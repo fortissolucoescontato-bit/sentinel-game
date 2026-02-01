@@ -2,6 +2,7 @@
 
 import { GlitchText } from "@/components/ui/glitch-text";
 import { Terminal, Cpu, Zap, Shield } from "lucide-react";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -31,6 +32,24 @@ export default function Home() {
         <p className="text-sm md:text-base text-slate-400 font-mono mb-12 max-w-2xl text-center">
           Next.js 15 • T3 Stack • Tailwind CSS v4 • Shadcn/UI • TypeScript
         </p>
+
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-4 mb-16">
+          <Link
+            href="/game"
+            className="px-8 py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-bold font-mono rounded-lg transition-all shadow-lg shadow-cyan-500/20 flex items-center gap-2 group"
+          >
+            <Terminal className="w-5 h-5 group-hover:animate-pulse" />
+            JOGAR AGORA
+          </Link>
+          <Link
+            href="/dashboard"
+            className="px-8 py-3 bg-slate-800 hover:bg-slate-700 text-cyan-400 font-bold font-mono rounded-lg transition-all border border-cyan-500/30 flex items-center gap-2"
+          >
+            <Shield className="w-5 h-5" />
+            DASHBOARD
+          </Link>
+        </div>
 
         {/* Feature Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl mt-8">
