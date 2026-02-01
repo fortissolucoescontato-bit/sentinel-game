@@ -16,11 +16,9 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button"; // Caso precise
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ShieldAlert, ShieldCheck, Search, Activity, FileCode } from "lucide-react";
-import { Badge } from "@/components/ui/badge"; // Vou usar span estilizado se não tiver badge ainda
-import { ScrollArea } from "@/components/ui/scroll-area"; // Vou assumir div com overflow se não tiver scroll-area
 
 interface LogEntry {
     id: number;
