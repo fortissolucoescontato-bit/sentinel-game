@@ -6,6 +6,7 @@ import { db } from "@/db";
 import { users, safes, logs, unlockedSafes } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getServerSideUser } from "@/lib/auth";
+import { revalidatePath } from "next/cache";
 
 interface HackResult {
     success: boolean;
@@ -202,6 +203,8 @@ RESPONDA SEMPRE EM PORTUGUÊS.`;
                 styleScore,
             });
         });
+
+        revalidatePath('/game');
 
         // 11. Return result
         return {
