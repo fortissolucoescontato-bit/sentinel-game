@@ -118,10 +118,10 @@ export function HackTerminal({
 
             {/* Terminal Body with Theme BG */}
             <div
-                className={`${theme.cssVars.bg} border-2 ${getBorderClass()} rounded-b-lg p-6 min-h-[500px] transition-all duration-300 font-mono`}
+                className={`${theme.cssVars.bg} border-2 ${getBorderClass()} rounded-b-lg p-6 h-[600px] flex flex-col transition-all duration-300 font-mono`}
             >
                 {/* Output Area */}
-                <div className="mb-6 text-sm">
+                <div className="flex-1 overflow-y-auto mb-4 text-sm scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent pr-2">
                     {/* System Messages */}
                     <div className={`${primary} mb-4 opacity-80`}>
                         <p>&gt; Sistema de sentinelas inicializado...</p>
