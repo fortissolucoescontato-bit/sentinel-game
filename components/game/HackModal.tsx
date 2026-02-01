@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
 import { X, Shield } from "lucide-react";
 import { HackTerminal } from "./HackTerminal";
 import type { Safe } from "@/db/schema";
@@ -14,15 +13,6 @@ interface HackModalProps {
 
 export function HackModal({ safe, onClose, onSuccess }: HackModalProps) {
     const modalRef = useRef<HTMLDivElement>(null);
-    const router = useRouter();
-
-    const handleSuccess = () => {
-        onSuccess();
-        // Refresh server data without full page reload
-        setTimeout(() => {
-            router.refresh();
-        }, 1500); // Small delay to let user see success message
-    };
 
     // Close on escape key
     useEffect(() => {
@@ -77,7 +67,7 @@ export function HackModal({ safe, onClose, onSuccess }: HackModalProps) {
                         safeId={safe.id}
                         safeName={`Cofre de ${safe.user.username}`}
                         defenseLevel={safe.defenseLevel}
-                        onSuccess={handleSuccess}
+                        onSuccess={onSuccess}
                     />
                 </div>
             </div>
