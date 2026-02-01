@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🛡️ SENTINEL - Cyberpunk Clean Stack
 
-## Getting Started
+Um projeto Next.js 15 moderno com T3 Stack, Tailwind CSS v4, e Shadcn/UI configurado com tema cyberpunk.
 
-First, run the development server:
+## 🚀 Stack Tecnológica
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Next.js 15** - App Router com TypeScript
+- **Tailwind CSS v4** - Nova sintaxe CSS-first
+- **Shadcn/UI** - Componentes com tema Slate (Dark Mode)
+- **Lucide React** - Ícones modernos
+- **TypeScript** - Type safety completo
+- **ESLint** - Linting configurado
+
+## 📁 Estrutura de Pastas
+
+```
+sentinel-app/
+├── app/                    # Next.js App Router
+│   ├── layout.tsx         # Layout raiz (dark mode forçado)
+│   ├── page.tsx           # Landing page principal
+│   └── globals.css        # Estilos globais (Tailwind v4)
+├── components/
+│   └── ui/                # Componentes Shadcn/UI
+│       └── glitch-text.tsx # Componente de texto com efeito glitch
+├── lib/                   # Utilitários
+│   └── utils.ts          # Funções helper (cn, etc)
+├── db/                    # Database (futuro)
+├── actions/               # Server Actions (futuro)
+└── public/               # Assets estáticos
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🎨 Visual Theme: Cyberpunk Clean
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+A landing page apresenta:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- ✨ **Efeito Glitch** no título "SENTINEL"
+- 🌐 **Grid Animado** de fundo
+- 💫 **Orbs Brilhantes** com blur e pulse
+- 📺 **Scanline Effect** para estética retro-futurista
+- 🎯 **Cards de Features** com hover effects
+- 🔮 **Gradientes Neon** (cyan, purple, pink)
+- 📊 **Status Bar** na parte inferior
 
-## Learn More
+## 🛠️ Comandos
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+# Desenvolvimento
+npm run dev
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Build de produção
+npm run build
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# Iniciar produção
+npm start
 
-## Deploy on Vercel
+# Linting
+npm run lint
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🌐 Desenvolvimento Local
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+O servidor de desenvolvimento roda em: `http://localhost:3000`
+
+## 📦 Dependências Principais
+
+```json
+{
+  "next": "16.1.6",
+  "react": "19.2.3",
+  "tailwindcss": "^4",
+  "lucide-react": "latest",
+  "typescript": "^5"
+}
+```
+
+## 🎯 Próximos Passos
+
+1. Adicionar mais componentes Shadcn/UI conforme necessário
+2. Configurar banco de dados (Prisma/Drizzle)
+3. Implementar Server Actions na pasta `actions/`
+4. Adicionar autenticação (NextAuth.js)
+5. Configurar tRPC para type-safe APIs
+
+## 📝 Notas
+
+- **Dark Mode**: Forçado permanentemente via `className="dark"` no `<html>`
+- **Tailwind v4**: Usando a nova sintaxe CSS-first com `@theme inline`
+- **Shadcn/UI**: Tema Slate configurado
+- **TypeScript**: Strict mode habilitado
+
+---
+
+**Desenvolvido com 💜 usando T3 Stack**

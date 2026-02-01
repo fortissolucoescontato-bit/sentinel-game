@@ -1,0 +1,101 @@
+"use client";
+
+import { useActionState } from "react"; // Hook do React 19
+import { createSafeAction } from "@/actions/safe";
+import { Shield, Lock, Cpu, AlertTriangle } from "lucide-react";
+
+export function CreateSafeForm({ userCredits }: { userCredits: number }) {
+    const [state, formAction, isPending] = useActionState(createSafeAction, null);
+    const cost = 500;
+    const canAfford = userCredits >= cost;
+
+    return (
+        <form action={formAction} className="space-y-6 max-w-2xl mx-auto">
+            {/* Secret Word */}
+            <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-mono text-cyan-400">
+                    <Lock className="w-4 h-4" />
+                    SECRET PASSWORD
+                </label>
+                <input
+                    name="secretWord"
+                    type="text"
+                    placeholder="e.g. Pineapple, 123456, Matrix"
+                    className="w-full bg-slate-900 border border-slate-700 rounded p-3 text-slate-100 placeholder:text-slate-600 focus:border-cyan-500 outline-none transition-colors"
+                />
+                {state?.fieldErrors?.secretWord && (
+                    <p className="text-red-400 text-xs font-mono">{state.fieldErrors.secretWord}</p>
+                )}
+                <p className="text-xs text-slate-500 font-mono">
+                    The exact word hackers need to guess. Case-insensitive.
+                </p>
+            </div>
+
+            {/* System Prompt */}
+            <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-mono text-purple-400">
+                    <Cpu className="w-4 h-4" />
+                    DEFENSE AI PERSONALITY (SYSTEM PROMPT)
+                </label>
+                <textarea
+                    name="systemPrompt"
+                    rows={5}
+                    placeholder="You are a grumpy medieval guard protecting a dungeon. You refuse to speak about the secret..."
+                    className="w-full bg-slate-900 border border-slate-700 rounded p-3 text-slate-100 placeholder:text-slate-600 focus:border-purple-500 outline-none transition-colors resize-none"
+                />
+                {state?.fieldErrors?.systemPrompt && (
+                    <p className="text-red-400 text-xs font-mono">{state.fieldErrors.systemPrompt}</p>
+                )}
+                <p className="text-xs text-slate-500 font-mono">
+                    Instructions for the AI that will protect your secret. Be creative!
+                </p>
+            </div>
+
+            {/* Defense Level */}
+            <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-mono text-yellow-400">
+                    <Shield className="w-4 h-4" />
+                    INITIAL DEFENSE LEVEL
+                </label>
+                <select
+                    name="defenseLevel"
+                    className="w-full bg-slate-900 border border-slate-700 rounded p-3 text-slate-100 focus:border-yellow-500 outline-none"
+                >
+                    <option value="1">Level 1 - Basic Firewall</option>
+                    <option value="2">Level 2 - Encrypted Node</option>
+                    <option value="3">Level 3 - Neural Net</option>
+                    <option value="4">Level 4 - Black ICE</option>
+                    <option value="5">Level 5 - Sentinel Core</option>
+                </select>
+                <p className="text-xs text-slate-500 font-mono">
+                    Higher levels look scarier but don't change AI difficulty (yet).
+                </p>
+            </div>
+
+            {/* Action Footer */}
+            <div className="pt-4 border-t border-slate-800">
+                <div className="flex items-center justify-between mb-4">
+                    <span className="text-sm text-slate-400 font-mono">Cost:</span>
+                    <span className={`text-lg font-bold font-mono ${canAfford ? "text-slate-200" : "text-red-400"}`}>
+                        {cost} CREDITS
+                    </span>
+                </div>
+
+                {state?.error && (
+                    <div className="mb-4 p-3 bg-red-950/30 border border-red-500/30 rounded flex items-center gap-2">
+                        <AlertTriangle className="w-4 h-4 text-red-500" />
+                        <p className="text-red-400 text-sm font-mono">{state.error}</p>
+                    </div>
+                )}
+
+                <button
+                    type="submit"
+                    disabled={isPending || !canAfford}
+                    className="w-full py-4 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 disabled:from-slate-800 disabled:to-slate-800 disabled:text-slate-500 text-white font-bold font-mono rounded-lg transition-all shadow-lg shadow-cyan-900/20 disabled:shadow-none"
+                >
+                    {isPending ? "DEPLOYING DEFENSES..." : canAfford ? "CREATE SAFE" : "INSUFFICIENT CREDITS"}
+                </button>
+            </div>
+        </form>
+    );
+}
