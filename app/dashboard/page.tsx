@@ -55,6 +55,7 @@ export default async function DashboardPage() {
     }
 
     const userId = user.id;
+    const stats = await getDashboardStats(userId);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
@@ -84,8 +85,8 @@ export default async function DashboardPage() {
                 <div className="mb-8">
                     <UserStats
                         user={user}
-                        successfulAttacks={0}
-                        totalAttacks={0}
+                        successfulAttacks={stats.attacks.successful}
+                        totalAttacks={stats.attacks.total}
                     />
                 </div>
 
@@ -93,9 +94,7 @@ export default async function DashboardPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
                     {/* Main Stats */}
                     <div className="lg:col-span-2">
-                        <Suspense fallback={<StatsSkeleton />}>
-                            <StatsSection userId={userId} />
-                        </Suspense>
+                        <DashboardStats stats={stats} />
                     </div>
 
                     {/* Quick Actions */}
