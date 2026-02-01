@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy, Shield, Swords, Crown, Medal } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 
 export default async function LeaderboardPage() {
     const user = await getServerSideUser(); // Optional auth check but good for logs
