@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { HackTerminal } from "@/components/game/HackTerminal";
+import { HackModal } from "@/components/game/HackModal";
 import { SafeList } from "@/components/game/SafeList";
 import { UserStats } from "@/components/game/UserStats";
 import { Tutorial } from "@/components/game/Tutorial";
-import { Terminal, HelpCircle } from "lucide-react";
+import { Terminal, HelpCircle, Scan } from "lucide-react";
 import type { User, Safe, Log } from "@/db/schema"; // Adjust import if needed, assuming these types are exported
 
 interface GameClientWrapperProps {
@@ -23,10 +23,8 @@ export function GameClientWrapper({
     successfulAttacks,
     totalAttacks,
 }: GameClientWrapperProps) {
-    const [selectedSafeId, setSelectedSafeId] = useState<number | null>(
-        availableSafes.length > 0 ? availableSafes[0].id : null
-    );
-
+    // Default to null so the modal doesn't open automatically
+    const [selectedSafeId, setSelectedSafeId] = useState<number | null>(null);
     const [showTutorial, setShowTutorial] = useState(false);
 
     const selectedSafe = availableSafes.find((safe) => safe.id === selectedSafeId);
@@ -83,26 +81,17 @@ export function GameClientWrapper({
                     </div>
                 </div>
 
-                {/* Hack Terminal - Right Column */}
+                {/* Right Column - Status / Context */}
                 <div className="lg:col-span-2">
-                    {selectedSafe ? (
-                        <HackTerminal
-                            key={selectedSafe.id} // Add key to force reset on safe change
-                            safeId={selectedSafe.id}
-                            safeName={`Cofre de ${selectedSafe.user.username}`}
-                            defenseLevel={selectedSafe.defenseLevel}
-                            onSuccess={() => {
-                                console.log("Safe cracked!");
-                                // In a real app, you might trigger a revalidation here
-                            }}
-                        />
-                    ) : (
-                        <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-12 text-center">
-                            <p className="text-slate-400 font-mono">
-                                Nenhum cofre disponível para atacar. Crie seu próprio cofre para defender!
-                            </p>
-                        </div>
-                    )}
+                    <div className="h-full min-h-[400px] bg-slate-900/50 border border-slate-800 rounded-lg p-12 flex flex-col items-center justify-center text-center">
+                        <Scan className="w-16 h-16 text-cyan-500/50 mb-4 animate-pulse" />
+                        <h3 className="text-xl font-bold text-slate-200 font-mono mb-2">
+                            AGUARDANDO SELEÇÃO DE ALVO
+                        </h3>
+                        <p className="text-slate-400 max-w-md">
+                            Selecione um cofre na lista à esquerda para iniciar a sequência de invasão.
+                        </p>
+                    </div>
                 </div>
             </div>
 
@@ -135,6 +124,19 @@ export function GameClientWrapper({
                         ))}
                     </div>
                 </div>
+            )}
+
+            {/* Hack Modal */}
+            {selectedSafe && (
+                <HackModal
+                    safe={selectedSafe}
+                    onClose={() => setSelectedSafeId(null)}
+                    onSuccess={() => {
+                        console.log("Safe cracked!");
+                        // Optional: close modal on success or keep it open?
+                        // Let's keep it open to see the success message
+                    }}
+                />
             )}
         </div>
     );

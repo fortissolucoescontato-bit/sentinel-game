@@ -118,7 +118,7 @@ export function HackTerminal({
 
             {/* Terminal Body with Theme BG */}
             <div
-                className={`${theme.cssVars.bg} border-2 ${getBorderClass()} rounded-b-lg p-6 h-[600px] flex flex-col transition-all duration-300 font-mono`}
+                className={`${theme.cssVars.bg} border-2 ${getBorderClass()} rounded-b-lg p-6 h-full min-h-[400px] flex flex-col transition-all duration-300 font-mono`}
             >
                 {/* Output Area */}
                 <div className="flex-1 overflow-y-auto mb-4 text-sm scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent pr-2">
