@@ -36,7 +36,7 @@ interface LogEntry {
     safe: {
         id: number;
         defenseLevel: number;
-    }
+    } | null;
 }
 
 interface SecurityLogsProps {
@@ -142,7 +142,7 @@ export function SecurityLogs({ logs }: SecurityLogsProps) {
                             FORENSIC ANALYSIS REPORT #{selectedLog?.id}
                         </DialogTitle>
                         <DialogDescription className="font-mono text-xs text-slate-500">
-                            Authorized access only. Analyzing attack vector on Safe #{selectedLog?.safe.id}.
+                            Authorized access only. Analyzing attack vector on Safe #{selectedLog?.safe?.id ?? 'N/A'}.
                         </DialogDescription>
                     </DialogHeader>
 
