@@ -35,6 +35,7 @@ export default function RootLayout({
       <html lang="en" className="dark" suppressHydrationWarning>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-950 text-slate-100 selection:bg-cyan-500/30 min-h-screen flex flex-col`}
+          suppressHydrationWarning
         >
           <Navbar />
           <main className="flex-1">
