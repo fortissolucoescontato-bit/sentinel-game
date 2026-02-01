@@ -77,7 +77,6 @@ export default async function GamePage() {
                     <div className="lg:col-span-2">
                         {availableSafes.length > 0 ? (
                             <HackTerminal
-                                attackerId={userId}
                                 safeId={availableSafes[0].id}
                                 safeName={`${availableSafes[0].user.username}'s Safe`}
                                 defenseLevel={availableSafes[0].defenseLevel}
@@ -107,8 +106,8 @@ export default async function GamePage() {
                                 <div
                                     key={log.id}
                                     className={`p-3 rounded border ${log.success
-                                            ? "bg-green-950/30 border-green-500/30"
-                                            : "bg-red-950/30 border-red-500/30"
+                                        ? "bg-green-950/30 border-green-500/30"
+                                        : "bg-red-950/30 border-red-500/30"
                                         }`}
                                 >
                                     <div className="flex items-center justify-between text-xs font-mono">
