@@ -4,7 +4,8 @@ import { useState } from "react";
 import { HackTerminal } from "@/components/game/HackTerminal";
 import { SafeList } from "@/components/game/SafeList";
 import { UserStats } from "@/components/game/UserStats";
-import { Terminal } from "lucide-react";
+import { Tutorial } from "@/components/game/Tutorial";
+import { Terminal, HelpCircle } from "lucide-react";
 import type { User, Safe, Log } from "@/db/schema"; // Adjust import if needed, assuming these types are exported
 
 interface GameClientWrapperProps {
@@ -26,22 +27,36 @@ export function GameClientWrapper({
         availableSafes.length > 0 ? availableSafes[0].id : null
     );
 
+    const [showTutorial, setShowTutorial] = useState(false);
+
     const selectedSafe = availableSafes.find((safe) => safe.id === selectedSafeId);
 
     return (
         <div className="relative z-10 container mx-auto px-4 py-8">
             {/* Header */}
-            <div className="mb-8">
-                <div className="flex items-center gap-3 mb-2">
-                    <Terminal className="w-8 h-8 text-cyan-400" />
-                    <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500">
-                        SENTINEL
-                    </h1>
+            <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <div className="flex items-center gap-3 mb-2">
+                        <Terminal className="w-8 h-8 text-cyan-400" />
+                        <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500">
+                            SENTINEL
+                        </h1>
+                    </div>
+                    <p className="text-slate-400 font-mono text-sm">
+                        Simulador de Hacking IA - Quebre as defesas, roube os segredos
+                    </p>
                 </div>
-                <p className="text-slate-400 font-mono text-sm">
-                    Simulador de Hacking IA - Quebre as defesas, roube os segredos
-                </p>
+                <button
+                    onClick={() => setShowTutorial(!showTutorial)}
+                    className="flex items-center gap-2 px-4 py-2 rounded bg-slate-800 hover:bg-slate-700 text-cyan-400 transition-colors border border-cyan-500/30"
+                >
+                    <HelpCircle className="w-4 h-4" />
+                    <span className="font-mono text-sm">{showTutorial ? "FECHAR TUTORIAL" : "COMO JOGAR"}</span>
+                </button>
             </div>
+
+            {/* Tutorial Section */}
+            {showTutorial && <Tutorial />}
 
             {/* User Stats */}
             <div className="mb-8">
