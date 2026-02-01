@@ -39,7 +39,7 @@ export function GameClientWrapper({
                     </h1>
                 </div>
                 <p className="text-slate-400 font-mono text-sm">
-                    AI Hacking Simulator - Breach the defenses, steal the secrets
+                    Simulador de Hacking IA - Quebre as defesas, roube os segredos
                 </p>
             </div>
 
@@ -58,7 +58,7 @@ export function GameClientWrapper({
                 <div className="lg:col-span-1">
                     <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-6">
                         <h2 className="text-xl font-bold text-cyan-400 font-mono mb-4">
-                            AVAILABLE TARGETS
+                            ALVOS DISPONÍVEIS
                         </h2>
                         <SafeList
                             safes={availableSafes}
@@ -74,7 +74,7 @@ export function GameClientWrapper({
                         <HackTerminal
                             key={selectedSafe.id} // Add key to force reset on safe change
                             safeId={selectedSafe.id}
-                            safeName={`${selectedSafe.user.username}'s Safe`}
+                            safeName={`Cofre de ${selectedSafe.user.username}`}
                             defenseLevel={selectedSafe.defenseLevel}
                             onSuccess={() => {
                                 console.log("Safe cracked!");
@@ -84,7 +84,7 @@ export function GameClientWrapper({
                     ) : (
                         <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-12 text-center">
                             <p className="text-slate-400 font-mono">
-                                No safes available to attack. Create your own safe to defend!
+                                Nenhum cofre disponível para atacar. Crie seu próprio cofre para defender!
                             </p>
                         </div>
                     )}
@@ -95,7 +95,7 @@ export function GameClientWrapper({
             {attackHistory.length > 0 && (
                 <div className="mt-8 bg-slate-900/50 border border-slate-800 rounded-lg p-6">
                     <h2 className="text-xl font-bold text-cyan-400 font-mono mb-4">
-                        RECENT ATTACKS
+                        ATAQUES RECENTES
                     </h2>
                     <div className="space-y-2 max-h-60 overflow-y-auto">
                         {attackHistory.slice(0, 10).map((log) => (
@@ -108,12 +108,12 @@ export function GameClientWrapper({
                             >
                                 <div className="flex items-center justify-between text-xs font-mono">
                                     <span className="text-slate-400">
-                                        vs {log.defender?.username || "Unknown"}
+                                        vs {log.defender?.username || "Desconhecido"}
                                     </span>
                                     <span
                                         className={log.success ? "text-green-400" : "text-red-400"}
                                     >
-                                        {log.success ? "SUCCESS" : "FAILED"}
+                                        {log.success ? "SUCESSO" : "FALHA"}
                                     </span>
                                 </div>
                             </div>

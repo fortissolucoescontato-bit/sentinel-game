@@ -15,19 +15,19 @@ export function CreateSafeForm({ userCredits }: { userCredits: number }) {
             <div className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-mono text-cyan-400">
                     <Lock className="w-4 h-4" />
-                    SECRET PASSWORD
+                    SENHA SECRETA
                 </label>
                 <input
                     name="secretWord"
                     type="text"
-                    placeholder="e.g. Pineapple, 123456, Matrix"
+                    placeholder="ex: Abacaxi, 123456, Matrix"
                     className="w-full bg-slate-900 border border-slate-700 rounded p-3 text-slate-100 placeholder:text-slate-600 focus:border-cyan-500 outline-none transition-colors"
                 />
                 {state?.fieldErrors?.secretWord && (
                     <p className="text-red-400 text-xs font-mono">{state.fieldErrors.secretWord}</p>
                 )}
                 <p className="text-xs text-slate-500 font-mono">
-                    The exact word hackers need to guess. Case-insensitive.
+                    A palavra exata que os hackers precisam adivinhar. Case-insensitive.
                 </p>
             </div>
 
@@ -35,19 +35,19 @@ export function CreateSafeForm({ userCredits }: { userCredits: number }) {
             <div className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-mono text-purple-400">
                     <Cpu className="w-4 h-4" />
-                    DEFENSE AI PERSONALITY (SYSTEM PROMPT)
+                    PERSONALIDADE DA IA DE DEFESA (SYSTEM PROMPT)
                 </label>
                 <textarea
                     name="systemPrompt"
                     rows={5}
-                    placeholder="You are a grumpy medieval guard protecting a dungeon. You refuse to speak about the secret..."
+                    placeholder="Você é um guarda medieval rabugento protegendo uma masmorra. Você se recusa a falar sobre o segredo..."
                     className="w-full bg-slate-900 border border-slate-700 rounded p-3 text-slate-100 placeholder:text-slate-600 focus:border-purple-500 outline-none transition-colors resize-none"
                 />
                 {state?.fieldErrors?.systemPrompt && (
                     <p className="text-red-400 text-xs font-mono">{state.fieldErrors.systemPrompt}</p>
                 )}
                 <p className="text-xs text-slate-500 font-mono">
-                    Instructions for the AI that will protect your secret. Be creative!
+                    Instruções para a IA que protegerá seu segredo. Seja criativo!
                 </p>
             </div>
 
@@ -55,29 +55,29 @@ export function CreateSafeForm({ userCredits }: { userCredits: number }) {
             <div className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-mono text-yellow-400">
                     <Shield className="w-4 h-4" />
-                    INITIAL DEFENSE LEVEL
+                    NÍVEL DE DEFESA INICIAL
                 </label>
                 <select
                     name="defenseLevel"
                     className="w-full bg-slate-900 border border-slate-700 rounded p-3 text-slate-100 focus:border-yellow-500 outline-none"
                 >
-                    <option value="1">Level 1 - Basic Firewall</option>
-                    <option value="2">Level 2 - Encrypted Node</option>
-                    <option value="3">Level 3 - Neural Net</option>
-                    <option value="4">Level 4 - Black ICE</option>
-                    <option value="5">Level 5 - Sentinel Core</option>
+                    <option value="1">Nível 1 - Firewall Básico</option>
+                    <option value="2">Nível 2 - Nó Criptografado</option>
+                    <option value="3">Nível 3 - Rede Neural</option>
+                    <option value="4">Nível 4 - Gelo Negro</option>
+                    <option value="5">Nível 5 - Núcleo Sentinela</option>
                 </select>
                 <p className="text-xs text-slate-500 font-mono">
-                    Higher levels look scarier but don't change AI difficulty (yet).
+                    Níveis mais altos parecem mais assustadores, mas não mudam a dificuldade da IA (ainda).
                 </p>
             </div>
 
             {/* Action Footer */}
             <div className="pt-4 border-t border-slate-800">
                 <div className="flex items-center justify-between mb-4">
-                    <span className="text-sm text-slate-400 font-mono">Cost:</span>
+                    <span className="text-sm text-slate-400 font-mono">Custo:</span>
                     <span className={`text-lg font-bold font-mono ${canAfford ? "text-slate-200" : "text-red-400"}`}>
-                        {cost} CREDITS
+                        {cost} CRÉDITOS
                     </span>
                 </div>
 
@@ -93,7 +93,7 @@ export function CreateSafeForm({ userCredits }: { userCredits: number }) {
                     disabled={isPending || !canAfford}
                     className="w-full py-4 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 disabled:from-slate-800 disabled:to-slate-800 disabled:text-slate-500 text-white font-bold font-mono rounded-lg transition-all shadow-lg shadow-cyan-900/20 disabled:shadow-none"
                 >
-                    {isPending ? "DEPLOYING DEFENSES..." : canAfford ? "CREATE SAFE" : "INSUFFICIENT CREDITS"}
+                    {isPending ? "IMPLANTANDO DEFESAS..." : canAfford ? "CRIAR COFRE" : "CRÉDITOS INSUFICIENTES"}
                 </button>
             </div>
         </form>

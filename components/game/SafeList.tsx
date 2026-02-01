@@ -52,7 +52,7 @@ export function SafeCard({ safe, onSelect, isSelected }: SafeCardProps) {
                         <Lock className="w-5 h-5 text-cyan-400" />
                     )}
                     <span className="font-mono text-sm text-slate-200">
-                        Safe #{safe.id}
+                        Cofre #{safe.id}
                     </span>
                 </div>
                 <div className={`flex items-center gap-1 ${getDifficultyColor(safe.defenseLevel)}`}>
@@ -72,7 +72,7 @@ export function SafeCard({ safe, onSelect, isSelected }: SafeCardProps) {
             {safe.isCracked && (
                 <div className="mt-2 pt-2 border-t border-red-500/30">
                     <span className="text-xs text-red-400 font-mono">
-                        ⚠️ ALREADY CRACKED
+                        ⚠️ JÁ QUEBRADO
                     </span>
                 </div>
             )}
@@ -81,7 +81,7 @@ export function SafeCard({ safe, onSelect, isSelected }: SafeCardProps) {
                 <div className="mt-3 pt-3 border-t border-cyan-500/30">
                     <div className="flex items-center gap-2 text-cyan-400">
                         <Zap className="w-3 h-3" />
-                        <span className="text-xs font-mono">TARGET LOCKED</span>
+                        <span className="text-xs font-mono">ALVO TRAVADO</span>
                     </div>
                 </div>
             )}
@@ -114,7 +114,7 @@ export function SafeList({ safes, selectedSafeId, onSelectSafe }: SafeListProps)
                 <div>
                     <h3 className="text-sm font-mono text-cyan-400 mb-3 flex items-center gap-2">
                         <Lock className="w-4 h-4" />
-                        ACTIVE TARGETS ({activeSafes.length})
+                        ALVOS ATIVOS ({activeSafes.length})
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         {activeSafes.map((safe) => (
@@ -134,7 +134,7 @@ export function SafeList({ safes, selectedSafeId, onSelectSafe }: SafeListProps)
                 <div>
                     <h3 className="text-sm font-mono text-red-400 mb-3 flex items-center gap-2">
                         <Unlock className="w-4 h-4" />
-                        CRACKED ({crackedSafes.length})
+                        QUEBRADOS ({crackedSafes.length})
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 opacity-50">
                         {crackedSafes.map((safe) => (
@@ -151,7 +151,7 @@ export function SafeList({ safes, selectedSafeId, onSelectSafe }: SafeListProps)
 
             {safes.length === 0 && (
                 <div className="text-center py-12 text-slate-500 font-mono text-sm">
-                    No safes available to attack
+                    Nenhum cofre disponível para atacar
                 </div>
             )}
         </div>

@@ -46,7 +46,7 @@ export function UserStats({ user, successfulAttacks = 0, totalAttacks = 0 }: Use
                 <div className="bg-slate-950/50 border border-cyan-500/30 rounded-lg p-4">
                     <div className="flex items-center gap-2 mb-2">
                         <Coins className="w-4 h-4 text-cyan-400" />
-                        <span className="text-xs text-slate-400 font-mono">CREDITS</span>
+                        <span className="text-xs text-slate-400 font-mono">CRÉDITOS</span>
                     </div>
                     <p className="text-2xl font-bold text-cyan-400 font-mono">
                         {user.credits.toLocaleString()}
@@ -57,7 +57,7 @@ export function UserStats({ user, successfulAttacks = 0, totalAttacks = 0 }: Use
                 <div className="bg-slate-950/50 border border-green-500/30 rounded-lg p-4">
                     <div className="flex items-center gap-2 mb-2">
                         <Trophy className="w-4 h-4 text-green-400" />
-                        <span className="text-xs text-slate-400 font-mono">SUCCESS</span>
+                        <span className="text-xs text-slate-400 font-mono">SUCESSO</span>
                     </div>
                     <p className="text-2xl font-bold text-green-400 font-mono">
                         {successRate.toFixed(0)}%
@@ -68,7 +68,7 @@ export function UserStats({ user, successfulAttacks = 0, totalAttacks = 0 }: Use
                 <div className="bg-slate-950/50 border border-yellow-500/30 rounded-lg p-4">
                     <div className="flex items-center gap-2 mb-2">
                         <Zap className="w-4 h-4 text-yellow-400" />
-                        <span className="text-xs text-slate-400 font-mono">ATTACKS</span>
+                        <span className="text-xs text-slate-400 font-mono">ATAQUES</span>
                     </div>
                     <p className="text-2xl font-bold text-yellow-400 font-mono">
                         {totalAttacks}
@@ -79,7 +79,7 @@ export function UserStats({ user, successfulAttacks = 0, totalAttacks = 0 }: Use
                 <div className="bg-slate-950/50 border border-purple-500/30 rounded-lg p-4">
                     <div className="flex items-center gap-2 mb-2">
                         <Shield className="w-4 h-4 text-purple-400" />
-                        <span className="text-xs text-slate-400 font-mono">BREACHES</span>
+                        <span className="text-xs text-slate-400 font-mono">INVASÕES</span>
                     </div>
                     <p className="text-2xl font-bold text-purple-400 font-mono">
                         {successfulAttacks}
@@ -90,7 +90,7 @@ export function UserStats({ user, successfulAttacks = 0, totalAttacks = 0 }: Use
             {/* Progress Bar */}
             <div className="mt-6">
                 <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs text-slate-400 font-mono">RANK PROGRESS</span>
+                    <span className="text-xs text-slate-400 font-mono">PROGRESSO DE RANK</span>
                     <span className="text-xs text-cyan-400 font-mono">
                         {user.credits} / {user.tier === "free" ? "5000" : user.tier === "pro" ? "15000" : "∞"}
                     </span>

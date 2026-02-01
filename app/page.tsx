@@ -25,7 +25,7 @@ export default function Home() {
 
         {/* Subtitle */}
         <p className="text-xl md:text-2xl text-cyan-400/80 font-mono mb-4 tracking-wide">
-          &gt; System Status: <span className="text-green-400 animate-pulse">ONLINE</span>
+          &gt; Status do Sistema: <span className="text-green-400 animate-pulse">ONLINE</span>
         </p>
 
         <p className="text-sm md:text-base text-slate-400 font-mono mb-12 max-w-2xl text-center">
@@ -37,22 +37,22 @@ export default function Home() {
           <FeatureCard
             icon={<Terminal className="w-8 h-8" />}
             title="App Router"
-            description="Next.js 15 with latest App Router architecture"
+            description="Next.js 15 com a mais recente arquitetura App Router"
           />
           <FeatureCard
             icon={<Cpu className="w-8 h-8" />}
             title="TypeScript"
-            description="Fully typed with TypeScript for maximum safety"
+            description="Totalmente tipado com TypeScript para segurança máxima"
           />
           <FeatureCard
             icon={<Zap className="w-8 h-8" />}
             title="Tailwind v4"
-            description="CSS-first syntax with modern design tokens"
+            description="Sintaxe CSS-first com tokens de design modernos"
           />
           <FeatureCard
             icon={<Shield className="w-8 h-8" />}
             title="Shadcn/UI"
-            description="Beautiful components with Slate theme"
+            description="Belos componentes com tema Slate"
           />
         </div>
 
@@ -60,12 +60,12 @@ export default function Home() {
         <div className="fixed bottom-0 left-0 right-0 bg-slate-950/80 backdrop-blur-sm border-t border-cyan-500/20 px-6 py-3">
           <div className="flex items-center justify-between max-w-7xl mx-auto">
             <div className="flex items-center gap-4 text-xs font-mono">
-              <span className="text-green-400">● READY</span>
+              <span className="text-green-400">● PRONTO</span>
               <span className="text-slate-500">|</span>
               <span className="text-cyan-400">v1.0.0</span>
             </div>
             <div className="flex items-center gap-2 text-xs font-mono text-slate-400">
-              <span className="hidden md:inline">CYBERPUNK_CLEAN_MODE</span>
+              <span className="hidden md:inline">MODO_CYBERPUNK_LIMPO</span>
               <div className="flex gap-1">
                 <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
                 <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse delay-150" />

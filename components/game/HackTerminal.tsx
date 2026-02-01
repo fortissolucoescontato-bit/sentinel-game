@@ -107,7 +107,7 @@ export function HackTerminal({
                     </span>
                 </div>
                 <div className="flex items-center gap-4 text-xs font-mono">
-                    <span className="text-slate-500">Target: {safeName}</span>
+                    <span className="text-slate-500">Alvo: {safeName}</span>
                     <span className="text-slate-500">DEF: {defenseLevel}</span>
                 </div>
             </div>
@@ -120,10 +120,10 @@ export function HackTerminal({
                 <div className="mb-6 text-sm">
                     {/* System Messages */}
                     <div className={`${primary} mb-4 opacity-80`}>
-                        <p>&gt; System initialized sentinels...</p>
-                        <p>&gt; Theme loaded: {theme.name}</p>
+                        <p>&gt; Sistema de sentinelas inicializado...</p>
+                        <p>&gt; Tema carregado: {theme.name}</p>
                         <p className={`${secondary} mt-2`}>
-                            &gt; Ready to hack. Enter payload.
+                            &gt; Pronto pra hackear. Insira o payload.
                         </p>
                     </div>
 
@@ -139,7 +139,7 @@ export function HackTerminal({
                                 <span
                                     className={`text-xs font-bold ${state.success ? "text-green-400" : "text-red-400"}`}
                                 >
-                                    {state.success ? "BREACH SUCCESSFUL" : "DEFENSE HELD"}
+                                    {state.success ? "ACESSO CONCEDIDO" : "ACESSO NEGADO"}
                                 </span>
                             </div>
 
@@ -155,7 +155,7 @@ export function HackTerminal({
                                     {/* Stats display code same as before... */}
                                     {state.stylePoints && state.stylePoints > 0 && (
                                         <div className="text-pink-400">
-                                            STYLE POINTS: +{state.stylePoints}
+                                            PONTOS DE ESTILO: +{state.stylePoints}
                                         </div>
                                     )}
                                 </div>
@@ -166,7 +166,7 @@ export function HackTerminal({
                     {/* Loading State */}
                     {isPending && (
                         <div className="mt-6 text-yellow-500 animate-pulse">
-                            &gt; Injecting payload...
+                            &gt; Injetando payload...
                         </div>
                     )}
                 </div>
@@ -183,7 +183,7 @@ export function HackTerminal({
                             value={inputPrompt}
                             onChange={(e) => setInputPrompt(e.target.value)}
                             disabled={isPending}
-                            placeholder="Enter attack vector..."
+                            placeholder="Insira o vetor de ataque..."
                             className={`w-full bg-transparent border-none outline-none ${primary} font-mono text-sm pl-6 pr-4 py-3 resize-none min-h-[100px] placeholder:text-slate-600 disabled:opacity-50 focus:ring-0`}
                             autoFocus
                         />
@@ -193,13 +193,13 @@ export function HackTerminal({
                     </div>
 
                     <div className="flex items-center justify-between">
-                        <span className="text-xs text-slate-500">Cost: 10 CR</span>
+                        <span className="text-xs text-slate-500">Custo: 10 CR</span>
                         <button
                             type="submit"
                             disabled={isPending || !inputPrompt.trim()}
                             className={`px-6 py-2 ${secondary.replace('text', 'bg')} text-black hover:opacity-80 disabled:opacity-50 font-bold text-sm rounded`}
                         >
-                            {isPending ? "HACKING..." : "EXECUTE"}
+                            {isPending ? "HACKEANDO..." : "EXECUTAR"}
                         </button>
                     </div>
                 </form>
