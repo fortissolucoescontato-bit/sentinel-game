@@ -52,16 +52,19 @@ export function HackTerminal({
     );
 
     // Typewriter effect
+    // Typewriter effect
     useEffect(() => {
-        if (state?.reply && !isTyping) {
+        if (state?.reply) {
             setIsTyping(true);
             setDisplayedText("");
             let currentIndex = 0;
             const text = state.reply;
 
+            // Clear any previous interval immediately
             const interval = setInterval(() => {
                 if (currentIndex < text.length) {
-                    setDisplayedText((prev) => prev + text[currentIndex]);
+                    // Use functional update to ensure we append to the current state
+                    setDisplayedText((prev) => prev + text.charAt(currentIndex));
                     currentIndex++;
                 } else {
                     setIsTyping(false);
@@ -69,9 +72,10 @@ export function HackTerminal({
                     if (state.success) onSuccess?.();
                 }
             }, 30);
+
             return () => clearInterval(interval);
         }
-    }, [state?.reply, isTyping, onSuccess]);
+    }, [state]); // Only depend on state changes
 
     // Cursor blinking
     useEffect(() => {
