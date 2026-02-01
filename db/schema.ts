@@ -49,11 +49,24 @@ export const logs = pgTable("logs", {
     createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+// Unlocked Safes (Join Table for Many-to-Many User-Safe relationship)
+export const unlockedSafes = pgTable("unlocked_safes", {
+    id: serial("id").primaryKey(),
+    userId: integer("user_id")
+        .notNull()
+        .references(() => users.id, { onDelete: "cascade" }),
+    safeId: integer("safe_id")
+        .notNull()
+        .references(() => safes.id, { onDelete: "cascade" }),
+    unlockedAt: timestamp("unlocked_at").notNull().defaultNow(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
     safes: many(safes),
     attackLogs: many(logs, { relationName: "attacker" }),
     defenseLogs: many(logs, { relationName: "defender" }),
+    unlockedSafes: many(unlockedSafes),
 }));
 
 export const safesRelations = relations(safes, ({ one, many }) => ({
@@ -62,6 +75,18 @@ export const safesRelations = relations(safes, ({ one, many }) => ({
         references: [users.id],
     }),
     logs: many(logs),
+    unlockedBy: many(unlockedSafes),
+}));
+
+export const unlockedSafesRelations = relations(unlockedSafes, ({ one }) => ({
+    user: one(users, {
+        fields: [unlockedSafes.userId],
+        references: [users.id],
+    }),
+    safe: one(safes, {
+        fields: [unlockedSafes.safeId],
+        references: [safes.id],
+    }),
 }));
 
 export const logsRelations = relations(logs, ({ one }) => ({
@@ -90,3 +115,6 @@ export type NewSafe = typeof safes.$inferInsert;
 
 export type Log = typeof logs.$inferSelect;
 export type NewLog = typeof logs.$inferInsert;
+
+export type UnlockedSafe = typeof unlockedSafes.$inferSelect;
+export type NewUnlockedSafe = typeof unlockedSafes.$inferInsert;

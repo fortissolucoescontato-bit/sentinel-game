@@ -3,7 +3,7 @@
 import { generateText } from "ai";
 import { createOpenAI } from "@ai-sdk/openai"; // Groq via OpenAI provider
 import { db } from "@/db";
-import { users, safes, logs } from "@/db/schema";
+import { users, safes, logs, unlockedSafes } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getServerSideUser } from "@/lib/auth";
 
@@ -89,13 +89,20 @@ export async function hackSafe(
             };
         }
 
-        // 5. Check if safe is already cracked
-        if (safe.isCracked) {
+        // 5. Check if attacker has already cracked this safe
+        const existingUnlock = await db.query.unlockedSafes.findFirst({
+            where: (unlocked, { and, eq }) => and(
+                eq(unlocked.userId, attackerId),
+                eq(unlocked.safeId, safeId)
+            ),
+        });
+
+        if (existingUnlock) {
             return {
                 success: false,
-                reply: "Este sistema já foi comprometido!",
+                reply: "Você já quebrou este cofre! Procure novos alvos.",
                 creditsSpent: 0,
-                error: "Cofre já quebrado",
+                error: "Cofre já invadido",
             };
         }
 
@@ -156,7 +163,7 @@ RESPONDA SEMPRE EM PORTUGUÊS.`;
 
         // 10. Execute transaction to update credits, style points and log the attack
         await db.transaction(async (tx) => {
-            // Deduct credits from attacker and add style points
+            // Deduct credits from attacker and add style points AND rewards if successful
             await tx
                 .update(users)
                 .set({
@@ -166,16 +173,14 @@ RESPONDA SEMPRE EM PORTUGUÊS.`;
                 })
                 .where(eq(users.id, attackerId));
 
-            // If successful, mark safe as cracked
+            // If successful, mark as unlocked for this user
             if (success) {
-                await tx
-                    .update(users)
-                    .set({
-                        credits: attacker.credits - ATTACK_COST + REWARD_FOR_SUCCESS,
-                        updatedAt: new Date(),
-                    })
-                    .where(eq(users.id, attackerId));
+                await tx.insert(unlockedSafes).values({
+                    userId: attackerId,
+                    safeId: safeId,
+                });
 
+                // Also update the safe globally to show it has been cracked at least once (optional, but good for stats)
                 await tx
                     .update(safes)
                     .set({
@@ -220,16 +225,12 @@ RESPONDA SEMPRE EM PORTUGUÊS.`;
 }
 
 /**
- * Get available safes to attack (excluding user's own safes and already cracked ones)
+ * Get available safes to attack (excluding user's own safes and already cracked BY THIS USER)
  */
 export async function getAvailableSafes(userId: number) {
     try {
-        const availableSafes = await db.query.safes.findMany({
-            where: (safes, { eq, and, not }) =>
-                and(
-                    eq(safes.isCracked, false),
-                    not(eq(safes.userId, userId))
-                ),
+        const potentialSafes = await db.query.safes.findMany({
+            where: (safes, { eq, not }) => not(eq(safes.userId, userId)),
             with: {
                 user: {
                     columns: {
@@ -238,11 +239,15 @@ export async function getAvailableSafes(userId: number) {
                         tier: true,
                     },
                 },
+                unlockedBy: {
+                    where: (unlocked, { eq }) => eq(unlocked.userId, userId),
+                },
             },
             orderBy: (safes, { desc }) => [desc(safes.defenseLevel)],
         });
 
-        return availableSafes;
+        // Filter out safes that have been unlocked by the current user
+        return potentialSafes.filter(safe => safe.unlockedBy.length === 0);
     } catch (error) {
         console.error("Error getting available safes:", error);
         return [];
