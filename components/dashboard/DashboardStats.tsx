@@ -9,11 +9,11 @@ interface DashboardStatsProps {
             failed: number;
             successRate: number;
         };
-        defenses: {
+        defense: {
             total: number;
-            breached: number;
-            held: number;
-            holdRate: number;
+            successful: number;
+            failed: number;
+            defenseRate: number;
         };
     };
 }
@@ -45,7 +45,7 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
                         <TrendingUp className="w-4 h-4 text-green-400" />
                     </div>
                     <p className="text-3xl font-bold text-green-400 font-mono">
-                        {stats.attacks.successRate}%
+                        {stats.attacks.successRate.toFixed(1)}%
                     </p>
                     <p className="text-xs text-slate-400 mt-1 font-mono">
                         {stats.attacks.failed} failed
@@ -61,10 +61,10 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
                         <Shield className="w-4 h-4 text-purple-400" />
                     </div>
                     <p className="text-3xl font-bold text-purple-400 font-mono">
-                        {stats.defenses.total}
+                        {stats.defense.total}
                     </p>
                     <p className="text-xs text-slate-400 mt-1 font-mono">
-                        {stats.defenses.held} held
+                        {stats.defense.successful} held
                     </p>
                 </CardContent>
             </Card>
@@ -77,10 +77,10 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
                         <TrendingDown className="w-4 h-4 text-yellow-400" />
                     </div>
                     <p className="text-3xl font-bold text-yellow-400 font-mono">
-                        {stats.defenses.holdRate}%
+                        {stats.defense.defenseRate.toFixed(1)}%
                     </p>
                     <p className="text-xs text-slate-400 mt-1 font-mono">
-                        {stats.defenses.breached} breached
+                        {stats.defense.failed} breached
                     </p>
                 </CardContent>
             </Card>
