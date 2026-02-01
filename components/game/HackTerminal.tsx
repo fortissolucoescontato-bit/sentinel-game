@@ -85,6 +85,15 @@ export function HackTerminal({
         return () => clearInterval(interval);
     }, []);
 
+    const outputRef = useRef<HTMLDivElement>(null);
+
+    // Auto-scroll effect
+    useEffect(() => {
+        if (outputRef.current) {
+            outputRef.current.scrollTop = outputRef.current.scrollHeight;
+        }
+    }, [displayedText, state, isPending]);
+
     // Border animation class
     const getBorderClass = () => {
         if (!state) return `border-${primary.split('-')[1]}-500/30`; // Dynamic border color fallback
@@ -101,9 +110,9 @@ export function HackTerminal({
     };
 
     return (
-        <div className="w-full max-w-4xl mx-auto">
+        <div className="w-full max-w-4xl mx-auto h-full flex flex-col">
             {/* Terminal Header */}
-            <div className={`border-b ${primary.replace('text', 'border')}/30 px-4 py-2 flex items-center justify-between rounded-t-lg bg-black/40`}>
+            <div className={`border-b ${primary.replace('text', 'border')}/30 px-4 py-2 flex items-center justify-between rounded-t-lg bg-black/40 shrink-0`}>
                 <div className="flex items-center gap-2">
                     <Terminal className={`w-4 h-4 ${primary}`} />
                     <span className={`text-xs font-mono ${primary}`}>
@@ -118,10 +127,13 @@ export function HackTerminal({
 
             {/* Terminal Body with Theme BG */}
             <div
-                className={`${theme.cssVars.bg} border-2 ${getBorderClass()} rounded-b-lg p-6 h-full min-h-[400px] flex flex-col transition-all duration-300 font-mono`}
+                className={`${theme.cssVars.bg} border-2 ${getBorderClass()} rounded-b-lg p-6 h-full flex flex-col transition-all duration-300 font-mono overflow-hidden`}
             >
                 {/* Output Area */}
-                <div className="flex-1 overflow-y-auto mb-4 text-sm scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent pr-2">
+                <div
+                    ref={outputRef}
+                    className="flex-1 overflow-y-auto mb-4 text-sm scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent pr-2 min-h-0"
+                >
                     {/* System Messages */}
                     <div className={`${primary} mb-4 opacity-80`}>
                         <p>&gt; Sistema de sentinelas inicializado...</p>
