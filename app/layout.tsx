@@ -32,7 +32,7 @@ export default function RootLayout({
         variables: { colorPrimary: "#06b6d4" },
       }}
     >
-      <html lang="en" className="dark">
+      <html lang="en" className="dark" suppressHydrationWarning>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-950 text-slate-100 selection:bg-cyan-500/30 min-h-screen flex flex-col`}
         >
