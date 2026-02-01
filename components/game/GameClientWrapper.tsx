@@ -23,11 +23,14 @@ export function GameClientWrapper({
     successfulAttacks,
     totalAttacks,
 }: GameClientWrapperProps) {
-    // Default to null so the modal doesn't open automatically
-    const [selectedSafeId, setSelectedSafeId] = useState<number | null>(null);
+    // Store the full safe object to persist it even if it's removed from availableSafes list after cracking
+    const [selectedSafe, setSelectedSafe] = useState<(Safe & { user: { id: number; username: string; tier: string } }) | null>(null);
     const [showTutorial, setShowTutorial] = useState(false);
 
-    const selectedSafe = availableSafes.find((safe) => safe.id === selectedSafeId);
+    const handleSelectSafe = (id: number) => {
+        const safe = availableSafes.find((s) => s.id === id);
+        if (safe) setSelectedSafe(safe);
+    };
 
     return (
         <div className="relative z-10 container mx-auto px-4 py-8">
@@ -75,8 +78,8 @@ export function GameClientWrapper({
                         </h2>
                         <SafeList
                             safes={availableSafes}
-                            selectedSafeId={selectedSafeId}
-                            onSelectSafe={(id) => setSelectedSafeId(id)}
+                            selectedSafeId={selectedSafe?.id || null}
+                            onSelectSafe={handleSelectSafe}
                         />
                     </div>
                 </div>
@@ -130,11 +133,10 @@ export function GameClientWrapper({
             {selectedSafe && (
                 <HackModal
                     safe={selectedSafe}
-                    onClose={() => setSelectedSafeId(null)}
+                    onClose={() => setSelectedSafe(null)}
                     onSuccess={() => {
                         console.log("Safe cracked!");
-                        // Optional: close modal on success or keep it open?
-                        // Let's keep it open to see the success message
+                        // Keep modal open to show success message
                     }}
                 />
             )}
