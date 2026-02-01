@@ -63,7 +63,6 @@ export function HackModal({ safe, onClose, onSuccess }: HackModalProps) {
                 {/* Modal Content - Terminal */}
                 <div className="flex-1 p-4 overflow-hidden bg-slate-950">
                     <HackTerminal
-                        key={safe.id}
                         safeId={safe.id}
                         safeName={`Cofre de ${safe.user.username}`}
                         defenseLevel={safe.defenseLevel}
