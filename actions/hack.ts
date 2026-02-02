@@ -213,7 +213,7 @@ Start interactions now.
 `;
 
         const { text: aiResponse } = await generateText({
-            model: groq("llama-3.3-70b-versatile"),
+            model: groq("llama-3.3-70b-versatile") as any,
             system: systemPrompt,
             prompt: inputPrompt,
             temperature: 0.7,
@@ -231,7 +231,7 @@ Start interactions now.
     `;
 
         const { text: judgeResponse } = await generateText({
-            model: groq("llama-3.3-70b-versatile"),
+            model: groq("llama-3.3-70b-versatile") as any,
             prompt: judgePrompt,
             temperature: 0.3,
         });
