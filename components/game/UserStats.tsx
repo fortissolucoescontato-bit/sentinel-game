@@ -2,6 +2,7 @@
 
 import { Coins, Trophy, Zap, Shield } from "lucide-react";
 import type { User } from "@/db/schema";
+import { GAME_CONFIG } from "@/lib/game-config";
 
 interface UserStatsProps {
     user: User;
@@ -11,6 +12,14 @@ interface UserStatsProps {
 
 export function UserStats({ user, successfulAttacks = 0, totalAttacks = 0 }: UserStatsProps) {
     const successRate = totalAttacks > 0 ? (successfulAttacks / totalAttacks) * 100 : 0;
+
+    const getTierLimit = (tier: string) => {
+        if (tier === GAME_CONFIG.TIERS.PRO.NAME) return GAME_CONFIG.TIERS.PRO.LIMIT;
+        if (tier === GAME_CONFIG.TIERS.ELITE.NAME) return GAME_CONFIG.TIERS.ELITE.LIMIT;
+        return GAME_CONFIG.TIERS.FREE.LIMIT;
+    };
+
+    const tierLimit = getTierLimit(user.tier);
 
     const getTierColor = (tier: string) => {
         const colors = {
@@ -92,7 +101,7 @@ export function UserStats({ user, successfulAttacks = 0, totalAttacks = 0 }: Use
                 <div className="flex items-center justify-between mb-2">
                     <span className="text-xs text-slate-400 font-mono">PROGRESSO DE RANK</span>
                     <span className="text-xs text-cyan-400 font-mono">
-                        {user.credits} / {user.tier === "free" ? "5000" : user.tier === "pro" ? "15000" : "∞"}
+                        {user.credits} / {tierLimit === Infinity ? "∞" : tierLimit}
                     </span>
                 </div>
                 <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
@@ -100,9 +109,7 @@ export function UserStats({ user, successfulAttacks = 0, totalAttacks = 0 }: Use
                         className="h-full bg-gradient-to-r from-cyan-500 to-purple-500 transition-all duration-500"
                         style={{
                             width: `${Math.min(
-                                (user.credits /
-                                    (user.tier === "free" ? 5000 : user.tier === "pro" ? 15000 : 15000)) *
-                                100,
+                                (user.credits / (tierLimit === Infinity ? 15000 : tierLimit)) * 100,
                                 100
                             )}%`,
                         }}

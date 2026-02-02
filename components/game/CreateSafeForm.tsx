@@ -4,13 +4,44 @@ import { useActionState } from "react"; // Hook do React 19
 import { createSafeAction } from "@/actions/safe";
 import { Shield, Lock, Cpu, AlertTriangle } from "lucide-react";
 
-export function CreateSafeForm({ userCredits }: { userCredits: number }) {
+import { GAME_CONFIG } from "@/lib/game-config";
+
+import { THEMES, ThemeId } from "@/lib/themes";
+import { Palette } from "lucide-react";
+
+export function CreateSafeForm({ userCredits, unlockedThemes }: { userCredits: number, unlockedThemes: string[] | null }) {
     const [state, formAction, isPending] = useActionState(createSafeAction, null);
-    const cost = 500;
+    const cost = GAME_CONFIG.SAFE_CREATION_COST;
     const canAfford = userCredits >= cost;
+    const availableThemes = unlockedThemes || ["dracula"];
 
     return (
         <form action={formAction} className="space-y-6 max-w-2xl mx-auto">
+            {/* Theme Selection */}
+            <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-mono text-pink-400">
+                    <Palette className="w-4 h-4" />
+                    TEMA DO TERMINAL
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {availableThemes.map((themeId) => {
+                        const theme = THEMES[themeId as ThemeId];
+                        if (!theme) return null;
+                        return (
+                            <label key={theme.id} className="cursor-pointer">
+                                <input type="radio" name="theme" value={theme.id} className="peer sr-only" defaultChecked={theme.id === "dracula"} />
+                                <div className={`p-3 rounded border border-slate-700 bg-slate-900 peer-checked:border-pink-500 peer-checked:bg-pink-900/20 transition-all text-center`}>
+                                    <div className={`w-full h-8 rounded mb-2 bg-gradient-to-r ${theme.previewColors}`} />
+                                    <span className={`text-xs font-mono block ${theme.cssVars.primary}`}>{theme.name}</span>
+                                </div>
+                            </label>
+                        );
+                    })}
+                </div>
+                <p className="text-xs text-slate-500 font-mono">
+                    Escolha a aparência que o invasor verá ao tentar hackear este cofre.
+                </p>
+            </div>
             {/* Secret Word */}
             <div className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-mono text-cyan-400">

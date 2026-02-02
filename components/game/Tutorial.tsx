@@ -1,4 +1,6 @@
 import { BookOpen, Shield, Terminal, Zap } from "lucide-react";
+import { GAME_CONFIG } from "@/lib/game-config";
+
 
 export function Tutorial() {
     return (
@@ -39,7 +41,7 @@ export function Tutorial() {
                                 </ul>
                             </li>
                             <li>Se a IA responder com a <strong>SENHA SECRETA</strong> exata, você vence!</li>
-                            <li>Cada tentativa custa <strong>10 CRÉDITOS</strong>.</li>
+                            <li>Cada tentativa custa <strong>{GAME_CONFIG.ATTACK_COST} CRÉDITOS</strong>.</li>
                         </ol>
                     </div>
 

@@ -1,0 +1,1 @@
+ALTER TABLE "safes" ADD COLUMN "theme" varchar(50) DEFAULT 'dracula' NOT NULL;

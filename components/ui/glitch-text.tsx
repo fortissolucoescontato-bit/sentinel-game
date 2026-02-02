@@ -3,37 +3,37 @@
 import { useEffect, useState } from "react";
 
 interface GlitchTextProps {
-    text: string;
-    className?: string;
+  text: string;
+  className?: string;
 }
 
 export function GlitchText({ text, className = "" }: GlitchTextProps) {
-    const [glitchActive, setGlitchActive] = useState(false);
+  const [glitchActive, setGlitchActive] = useState(false);
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setGlitchActive(true);
-            setTimeout(() => setGlitchActive(false), 200);
-        }, 3000);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setGlitchActive(true);
+      setTimeout(() => setGlitchActive(false), 200);
+    }, 3000);
 
-        return () => clearInterval(interval);
-    }, []);
+    return () => clearInterval(interval);
+  }, []);
 
-    return (
-        <div className={`relative inline-block ${className}`}>
-            <h1
-                className={`
-          text-8xl font-bold tracking-wider
+  return (
+    <div className={`relative inline-block ${className}`}>
+      <h1
+        className={`
+          text-5xl md:text-7xl lg:text-8xl font-bold tracking-wider
           bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500
           bg-clip-text text-transparent
           transition-all duration-200
           ${glitchActive ? "glitch-active" : ""}
         `}
-                data-text={text}
-            >
-                {text}
-            </h1>
-            <style jsx>{`
+        data-text={text}
+      >
+        {text}
+      </h1>
+      <style jsx>{`
         h1 {
           position: relative;
           text-shadow: 
@@ -122,6 +122,6 @@ export function GlitchText({ text, className = "" }: GlitchTextProps) {
           }
         }
       `}</style>
-        </div>
-    );
+    </div>
+  );
 }

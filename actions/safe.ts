@@ -6,7 +6,10 @@ import { users, safes } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 
-const SAFE_CREATION_COST = 500;
+import { GAME_CONFIG } from "@/lib/game-config";
+
+// const SAFE_CREATION_COST = 500;
+
 
 interface CreateSafeState {
     success?: boolean;
@@ -32,6 +35,7 @@ export async function createSafeAction(
     const systemPrompt = formData.get("systemPrompt") as string;
     const defenseLevelStr = formData.get("defenseLevel") as string;
     const defenseLevel = parseInt(defenseLevelStr || "1");
+    const theme = (formData.get("theme") as string) || "dracula";
 
     // Validate inputs
     const fieldErrors: CreateSafeState["fieldErrors"] = {};
@@ -46,9 +50,12 @@ export async function createSafeAction(
         return { fieldErrors };
     }
 
+    // Validate Theme ownership
+    const safeTheme = (user.unlockedThemes || ["dracula"]).includes(theme) ? theme : "dracula";
+
     // Check credits
-    if (user.credits < SAFE_CREATION_COST) {
-        return { error: `Insufficient credits. Costs ${SAFE_CREATION_COST} credits.` };
+    if (user.credits < GAME_CONFIG.SAFE_CREATION_COST) {
+        return { error: `Insufficient credits. Costs ${GAME_CONFIG.SAFE_CREATION_COST} credits.` };
     }
 
     try {
@@ -57,7 +64,7 @@ export async function createSafeAction(
             await tx
                 .update(users)
                 .set({
-                    credits: user.credits - SAFE_CREATION_COST,
+                    credits: user.credits - GAME_CONFIG.SAFE_CREATION_COST,
                     updatedAt: new Date(),
                 })
                 .where(eq(users.id, user.id));
@@ -68,6 +75,7 @@ export async function createSafeAction(
                 secretWord: secretWord.trim(),
                 systemPrompt: systemPrompt.trim(),
                 defenseLevel,
+                theme: safeTheme,
             });
         });
     } catch (error) {

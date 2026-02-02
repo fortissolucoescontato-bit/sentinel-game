@@ -24,6 +24,7 @@ export const safes = pgTable("safes", {
         .references(() => users.id, { onDelete: "cascade" }),
     secretWord: varchar("secret_word", { length: 255 }).notNull(),
     systemPrompt: text("system_prompt").notNull(),
+    theme: varchar("theme", { length: 50 }).notNull().default("dracula"), // Visual theme of the safe
     defenseLevel: integer("defense_level").notNull().default(1), // 1-5
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),

@@ -29,7 +29,7 @@ export default async function CreateSafePage() {
                 </div>
 
                 <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-8 backdrop-blur-sm">
-                    <CreateSafeForm userCredits={user.credits} />
+                    <CreateSafeForm userCredits={user.credits} unlockedThemes={user.unlockedThemes} />
                 </div>
             </div>
         </div>

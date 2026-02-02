@@ -27,13 +27,13 @@ export default async function LeaderboardPage() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-950 p-8">
+        <div className="min-h-screen bg-slate-950 p-4 md:p-8">
             {/* Background */}
             <div className="fixed inset-0 bg-[linear-gradient(rgba(30,41,59,0.2)_1px,transparent_1px),linear-gradient(90deg,rgba(30,41,59,0.2)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none" />
 
             <div className="max-w-7xl mx-auto relative z-10">
                 <div className="mb-12 text-center">
-                    <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 font-mono mb-4 flex items-center justify-center gap-4">
+                    <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 font-mono mb-4 flex items-center justify-center gap-4">
                         <Trophy className="w-10 h-10 text-yellow-500" />
                         GLOBAL HALL OF FAME
                     </h1>

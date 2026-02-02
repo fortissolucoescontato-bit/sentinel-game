@@ -66,6 +66,7 @@ export function HackModal({ safe, onClose, onSuccess }: HackModalProps) {
                         safeId={safe.id}
                         safeName={`Cofre de ${safe.user.username}`}
                         defenseLevel={safe.defenseLevel}
+                        themeId={safe.theme}
                         onSuccess={onSuccess}
                     />
                 </div>

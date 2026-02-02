@@ -38,7 +38,7 @@ export function GameClientWrapper({
                 <div>
                     <div className="flex items-center gap-3 mb-2">
                         <Terminal className="w-8 h-8 text-cyan-400" />
-                        <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500">
+                        <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500">
                             SENTINEL
                         </h1>
                     </div>
