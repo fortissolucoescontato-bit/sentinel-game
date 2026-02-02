@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { HackModal } from "@/components/game/HackModal";
-import { SafeList } from "@/components/game/SafeList";
 import { UserStats } from "@/components/game/UserStats";
 import { Tutorial } from "@/components/game/Tutorial";
 import { Terminal, HelpCircle, Scan } from "lucide-react";
@@ -74,13 +73,34 @@ export function GameClientWrapper({
                 <div className="lg:col-span-1">
                     <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-6">
                         <h2 className="text-xl font-bold text-cyan-400 font-mono mb-4">
-                            ALVOS DISPONÍVEIS
+                            ALVOS DISPONÍVEIS ({availableSafes.length})
                         </h2>
-                        <SafeList
-                            safes={availableSafes}
-                            selectedSafeId={selectedSafe?.id || null}
-                            onSelectSafe={handleSelectSafe}
-                        />
+                        <div className="space-y-2">
+                            {availableSafes.map((safe) => (
+                                <button
+                                    key={safe.id}
+                                    onClick={() => handleSelectSafe(safe.id)}
+                                    className={`w-full p-3 rounded border-2 transition-all text-left ${selectedSafe?.id === safe.id
+                                        ? "border-cyan-500 bg-cyan-950/30"
+                                        : "border-slate-700 bg-slate-800/50 hover:border-slate-600"
+                                        }`}
+                                >
+                                    <div className="flex justify-between items-center">
+                                        <span className="font-mono text-sm text-slate-200">
+                                            {safe.user.username}
+                                        </span>
+                                        <span className="text-xs text-cyan-400">
+                                            Lvl {safe.defenseLevel}
+                                        </span>
+                                    </div>
+                                </button>
+                            ))}
+                            {availableSafes.length === 0 && (
+                                <p className="text-slate-500 text-sm text-center py-4">
+                                    Nenhum alvo disponível
+                                </p>
+                            )}
+                        </div>
                     </div>
                 </div>
 

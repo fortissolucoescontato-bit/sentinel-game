@@ -179,15 +179,6 @@ RESPONDA SEMPRE EM PORTUGUÊS.`;
                     userId: attackerId,
                     safeId: safeId,
                 });
-
-                // Also update the safe globally to show it has been cracked at least once (optional, but good for stats)
-                await tx
-                    .update(safes)
-                    .set({
-                        isCracked: true,
-                        updatedAt: new Date(),
-                    })
-                    .where(eq(safes.id, safeId));
             }
 
             // Log the attack with style score

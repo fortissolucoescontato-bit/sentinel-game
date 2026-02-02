@@ -105,7 +105,6 @@ export async function createSafe(
                 secretWord: secretWord.trim(),
                 systemPrompt: systemPrompt.trim(),
                 defenseLevel,
-                isCracked: false,
             })
             .returning();
 
@@ -125,17 +124,13 @@ export async function updateSafeDefense(
     defenseLevel: number
 ) {
     try {
-        // Check if safe exists and is not cracked
+        // Check if safe exists
         const safe = await db.query.safes.findFirst({
             where: eq(safes.id, safeId),
         });
 
         if (!safe) {
             throw new Error("Safe not found");
-        }
-
-        if (safe.isCracked) {
-            throw new Error("Cannot update a cracked safe");
         }
 
         const [updatedSafe] = await db

@@ -1,11 +1,18 @@
 import { GameClientWrapper } from "@/components/game/GameClientWrapper";
 import { getAvailableSafes, getAttackHistory } from "@/actions/hack";
 import { getUserProfile } from "@/actions/user";
+import { getServerSideUser } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 export default async function GamePage() {
-    // Simulando usuário logado (ID 1 = Alice)
-    // Em produção, você pegaria isso da sessão de autenticação
-    const userId = 1;
+    // Get authenticated user
+    const authenticatedUser = await getServerSideUser();
+
+    if (!authenticatedUser) {
+        redirect("/sign-in");
+    }
+
+    const userId = authenticatedUser.id;
 
     const [user, availableSafes, attackHistory] = await Promise.all([
         getUserProfile(userId),

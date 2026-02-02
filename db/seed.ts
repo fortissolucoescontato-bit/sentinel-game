@@ -124,7 +124,6 @@ async function seed() {
                 secretWord: data.safe.secretWord,
                 systemPrompt: data.safe.systemPrompt,
                 defenseLevel: data.safe.defenseLevel,
-                isCracked: false,
             });
         }
 

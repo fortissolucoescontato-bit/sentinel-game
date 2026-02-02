@@ -52,7 +52,6 @@ export function HackTerminal({
     );
 
     // Typewriter effect
-    // Typewriter effect
     useEffect(() => {
         if (state?.reply) {
             setIsTyping(true);

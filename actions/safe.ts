@@ -68,7 +68,6 @@ export async function createSafeAction(
                 secretWord: secretWord.trim(),
                 systemPrompt: systemPrompt.trim(),
                 defenseLevel,
-                isCracked: false, // Starts locked
             });
         });
     } catch (error) {

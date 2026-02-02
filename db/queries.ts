@@ -97,9 +97,8 @@ export const safeQueries = {
     findAvailableTargets: async (userId: number) => {
         return await db.query.safes.findMany({
             where: and(
-                eq(safes.isCracked, false),
-                // Note: You'll need to add a 'not' condition here
-                // This is a simplified version
+                // Logic to exclude unlocked safes should be handled by join with unlocked_safes table
+                // For now, we return all safes
             ),
             with: {
                 user: {
@@ -124,13 +123,13 @@ export const safeQueries = {
     /**
      * Mark safe as cracked
      */
+    /**
+     * Mark safe as cracked - DEPRECATED
+     * Use unlocked_safes table instead
+     */
     markAsCracked: async (safeId: number) => {
-        const [safe] = await db
-            .update(safes)
-            .set({ isCracked: true, updatedAt: new Date() })
-            .where(eq(safes.id, safeId))
-            .returning();
-        return safe;
+        // No-op for now, or throw error
+        throw new Error("Deprecated");
     },
 
     /**
@@ -273,12 +272,9 @@ export const executeAttack = async (
             })
             .returning();
 
-        // If successful, mark safe as cracked
+        // If successful, logic should be handled by unlocked_safes insert
         if (success) {
-            await tx
-                .update(safes)
-                .set({ isCracked: true, updatedAt: new Date() })
-                .where(eq(safes.id, safeId));
+            // Deprecated: await tx.update(safes).set({ isCracked: true })...
         }
 
         return log;

@@ -25,7 +25,6 @@ export const safes = pgTable("safes", {
     secretWord: varchar("secret_word", { length: 255 }).notNull(),
     systemPrompt: text("system_prompt").notNull(),
     defenseLevel: integer("defense_level").notNull().default(1), // 1-5
-    isCracked: boolean("is_cracked").notNull().default(false),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
