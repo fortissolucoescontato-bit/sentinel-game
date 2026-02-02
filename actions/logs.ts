@@ -8,8 +8,8 @@ export async function getSafeChatHistory(safeId: number) {
     if (!user) return [];
 
     try {
-        const { data: history, error } = await supabase
-            .from('logs')
+        const { data: history, error } = await (supabase
+            .from('logs') as any)
             .select('id, input_prompt, ai_response, created_at, success')
             .eq('attacker_id', user.id)
             .eq('safe_id', safeId)
@@ -36,8 +36,8 @@ export async function getSafeChatHistory(safeId: number) {
 
 export async function getDefenseLogs(userId: number, limit = 20) {
     try {
-        const { data: defenseLogs, error } = await supabase
-            .from('logs')
+        const { data: defenseLogs, error } = await (supabase
+            .from('logs' as any) as any)
             .select(`
                 *,
                 attacker:users!attacker_id(username, tier),
@@ -77,7 +77,5 @@ export async function getDefenseLogs(userId: number, limit = 20) {
 
 export async function getUnreadLogsCount(userId: number, lastCheck: Date) {
     // Implementation for notification badge logic
-    // For now, we returns strict calculation based on time, 
-    // ideally we would save 'last_logs_viewed_at' in the user table.
     return 0;
 }

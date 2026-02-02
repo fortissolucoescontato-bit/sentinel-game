@@ -34,6 +34,7 @@ export async function createSafeAction(
     const defenseLevelStr = formData.get("defenseLevel") as string;
     const defenseLevel = parseInt(defenseLevelStr || "1");
     const theme = (formData.get("theme") as string) || "dracula";
+    const mode = (formData.get("mode") as string) || "classic";
 
     // Validate inputs
     const fieldErrors: CreateSafeState["fieldErrors"] = {};
@@ -63,7 +64,8 @@ export async function createSafeAction(
             secretWord,
             systemPrompt,
             defenseLevel,
-            safeTheme
+            safeTheme,
+            mode // Passing the mode to the underlying function
         );
 
     } catch (error) {

@@ -8,8 +8,8 @@ import { supabase } from "@/lib/supabase";
  */
 export async function getTopHackers(limit = 10) {
     try {
-        const { data: topUsers, error } = await supabase
-            .from('users')
+        const { data: topUsers, error } = await (supabase
+            .from('users') as any)
             .select('id, username, credits, tier, style_points')
             .order('credits', { ascending: false })
             .limit(limit);
@@ -24,10 +24,7 @@ export async function getTopHackers(limit = 10) {
             username: u.username,
             credits: u.credits,
             tier: u.tier,
-            stylePoints: u.style_points // map properly if needed, but schema.ts has stylePoints/style_points confusion in my mind. 
-            // In schema.ts: stylePoints: integer("style_points")
-            // In Supabase response: style_points
-            // So: stylePoints: u.style_points
+            stylePoints: u.style_points
         }));
     } catch (error) {
         console.error("Error fetching top hackers:", error);
@@ -42,9 +39,8 @@ export async function getTopHackers(limit = 10) {
 export async function getTopDefenders(limit = 10) {
     try {
         // Fetch all failed logs to aggregate
-        // NOT EFFICIENT for production, but workable for MVP with REST API
-        const { data: logs, error } = await supabase
-            .from('logs')
+        const { data: logs, error } = await (supabase
+            .from('logs') as any)
             .select('defender_id')
             .eq('success', false);
 
@@ -67,8 +63,8 @@ export async function getTopDefenders(limit = 10) {
 
         if (topDefenderIds.length === 0) return [];
 
-        const { data: users, error: usersError } = await supabase
-            .from('users')
+        const { data: users, error: usersError } = await (supabase
+            .from('users') as any)
             .select('id, username, tier')
             .in('id', topDefenderIds);
 
@@ -96,13 +92,13 @@ export async function getTopDefenders(limit = 10) {
  */
 export async function getDashboardStats(userId: number) {
     try {
-        const { data: attackLogs, error: attackError } = await supabase
-            .from('logs')
+        const { data: attackLogs, error: attackError } = await (supabase
+            .from('logs') as any)
             .select('success')
             .eq('attacker_id', userId);
 
-        const { data: defenseLogs, error: defenseError } = await supabase
-            .from('logs')
+        const { data: defenseLogs, error: defenseError } = await (supabase
+            .from('logs') as any)
             .select('success')
             .eq('defender_id', userId);
 
@@ -144,7 +140,7 @@ export async function getDashboardStats(userId: number) {
  */
 export async function getUserRank(userId: number) {
     try {
-        const { data, error } = await supabase.rpc('get_user_rank', { p_user_id: userId });
+        const { data, error } = await (supabase as any).rpc('get_user_rank', { p_user_id: userId });
 
         if (error) throw error;
         return data as number;

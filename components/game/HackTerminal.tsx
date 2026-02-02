@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useState, useRef } from "react";
 import { hackSafe } from "@/actions/hack";
 import { getSafeChatHistory } from "@/actions/logs";
-import { Terminal, Zap, Shield, Skull } from "lucide-react";
+import { Terminal, Zap, Shield, Skull, Target } from "lucide-react";
 import { THEMES, ThemeId } from "@/lib/themes"; // Import themes config
 import { GAME_CONFIG } from "@/lib/game-config";
 
@@ -13,6 +13,8 @@ interface HackTerminalProps {
     safeName: string;
     defenseLevel: number;
     themeId?: string;
+    mode?: string; // New prop
+    secretWord?: string; // Needed for Injection mode to show target
     onSuccess?: () => void;
 }
 
@@ -31,6 +33,8 @@ export function HackTerminal({
     safeName,
     defenseLevel,
     themeId = "dracula",
+    mode = "classic",
+    secretWord,
     onSuccess,
 }: HackTerminalProps) {
     const [inputPrompt, setInputPrompt] = useState("");
@@ -40,6 +44,7 @@ export function HackTerminal({
     const [history, setHistory] = useState<{ id: number, inputPrompt: string, aiResponse: string, success: boolean }[]>([]);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const outputRef = useRef<HTMLDivElement>(null);
+    const formRef = useRef<HTMLFormElement>(null);
 
     // Get Theme Config
     const theme = THEMES[themeId as ThemeId] || THEMES.dracula;
@@ -48,7 +53,7 @@ export function HackTerminal({
     // Load History
     useEffect(() => {
         getSafeChatHistory(safeId).then((logs) => {
-            setHistory(logs.map(l => ({ ...l, success: l.success || false })));
+            setHistory(logs.map((l: any) => ({ ...l, success: l.success || false })));
         });
     }, [safeId]);
 
@@ -56,7 +61,6 @@ export function HackTerminal({
     const [state, formAction, isPending] = useActionState<HackState | null, FormData>(
         async (_prevState, formData) => {
             const prompt = formData.get("prompt") as string;
-            // Optimistic update? No, wait for response.
             const result = await hackSafe(safeId, prompt);
             return result;
         },
@@ -109,14 +113,10 @@ export function HackTerminal({
     }, [state]);
 
 
-    const formRef = useRef<HTMLFormElement>(null);
-
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
             if (!inputPrompt.trim() || isPending) return;
-
-            // Submit the form natively to trigger the server action properly via React transition
             formRef.current?.requestSubmit();
         }
     };
@@ -148,6 +148,21 @@ export function HackTerminal({
             <div
                 className={`${theme.cssVars.bg} border-2 ${getBorderClass()} rounded-b-lg p-6 h-full flex flex-col transition-all duration-300 font-mono overflow-hidden`}
             >
+                {/* Objective Banner */}
+                <div className="mb-4 p-2 border border-dashed border-white/10 rounded bg-white/5 flex items-center gap-3">
+                    <Target className="w-4 h-4 text-cyan-400" />
+                    <div className="text-xs font-mono">
+                        <span className="text-slate-500">MISSÃO: </span>
+                        {mode === "classic" ? (
+                            <span className="text-cyan-400">Extrair a Senha Secreta (oculta)</span>
+                        ) : (
+                            <span className="text-yellow-400">
+                                Injeção: Faça a IA dizer exatamente: <span className="text-white bg-white/10 px-1 font-bold">"{secretWord}"</span>
+                            </span>
+                        )}
+                    </div>
+                </div>
+
                 {/* Output Area */}
                 <div
                     ref={outputRef}
@@ -156,6 +171,7 @@ export function HackTerminal({
                     {/* System Init */}
                     <div className={`${primary} opacity-80`}>
                         <p>&gt; Sistema Sentinela inicializado...</p>
+                        <p>&gt; Modo de Jogo Detectado: {mode?.toUpperCase()}</p>
                         <p>&gt; Tema carregado: {theme.name}</p>
                         <p className={`${secondary} mt-1`}>
                             &gt; Histórico de conexão recuperado: {history.length} entradas.
@@ -163,7 +179,7 @@ export function HackTerminal({
                     </div>
 
                     {/* HISTORY ITEMS */}
-                    {history.map((item) => (
+                    {history.map((item: any) => (
                         <div key={item.id} className="opacity-70 hover:opacity-100 transition-opacity">
                             {/* User Prompt */}
                             <div className="flex gap-2 mb-1">
@@ -190,14 +206,6 @@ export function HackTerminal({
                     {/* CURRENT INTERACTION */}
                     {state && (
                         <div className="opacity-100 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                            {/* User Prompt (What we just sent) */}
-                            {/* We don't store the prompt in 'state', we only know what we sent if we kept it or used 'pending' status better. 
-                                 However, for simplicity, let's just show the AI Response part here since the user knows what they typed 
-                                 (it was in the input). Ideally we should show the prompt too.
-                                 Let's skip showing the prompt for the "just now" response to keep it simple or assume it enters history on next reload.
-                                 Wait, user wants to see what they typed.
-                              */}
-
                             <div className={`mt-4 p-4 bg-black/30 rounded border border-${secondary.split('-')[1]}-500/30`}>
                                 <div className="flex items-center gap-2 mb-2">
                                     {state.success ? (
@@ -226,7 +234,6 @@ export function HackTerminal({
                                                 PONTOS DE ESTILO: +{state.stylePoints}
                                             </div>
                                         )}
-                                        {/* Cost is static in UI now */}
                                     </div>
                                 )}
                             </div>

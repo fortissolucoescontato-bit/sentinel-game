@@ -9,7 +9,7 @@ import type { User, Safe, Log } from "@/db/schema"; // Adjust import if needed, 
 
 interface GameClientWrapperProps {
     user: User & { xp?: number; level?: number }; // Assuming UserStats needs extra fields or standard user
-    availableSafes: (Safe & { user: { id: number; username: string; tier: string } })[];
+    availableSafes: (Safe & { user: { id: number; username: string; tier: string }, mode?: string })[];
     attackHistory: (Log & { defender: { username: string } | null })[];
     successfulAttacks: number;
     totalAttacks: number;
@@ -23,7 +23,7 @@ export function GameClientWrapper({
     totalAttacks,
 }: GameClientWrapperProps) {
     // Store the full safe object to persist it even if it's removed from availableSafes list after cracking
-    const [selectedSafe, setSelectedSafe] = useState<(Safe & { user: { id: number; username: string; tier: string } }) | null>(null);
+    const [selectedSafe, setSelectedSafe] = useState<(Safe & { user: { id: number; username: string; tier: string }, mode?: string }) | null>(null);
     const [showTutorial, setShowTutorial] = useState(false);
 
     const handleSelectSafe = (id: number) => {
@@ -76,7 +76,7 @@ export function GameClientWrapper({
                             ALVOS DISPONÍVEIS ({availableSafes.length})
                         </h2>
                         <div className="space-y-2">
-                            {availableSafes.map((safe) => (
+                            {availableSafes.map((safe: any) => (
                                 <button
                                     key={safe.id}
                                     onClick={() => handleSelectSafe(safe.id)}
@@ -86,9 +86,14 @@ export function GameClientWrapper({
                                         }`}
                                 >
                                     <div className="flex justify-between items-center">
-                                        <span className="font-mono text-sm text-slate-200">
-                                            {safe.user.username}
-                                        </span>
+                                        <div className="flex flex-col">
+                                            <span className="font-mono text-sm text-slate-200">
+                                                {safe.user.username}
+                                            </span>
+                                            {safe.mode === "injection" && (
+                                                <span className="text-[10px] text-yellow-500 border border-yellow-500/30 px-1 rounded w-fit mt-1">INJEÇÃO</span>
+                                            )}
+                                        </div>
                                         <span className="text-xs text-cyan-400">
                                             Lvl {safe.defenseLevel}
                                         </span>
@@ -125,7 +130,7 @@ export function GameClientWrapper({
                         ATAQUES RECENTES
                     </h2>
                     <div className="space-y-2 max-h-60 overflow-y-auto">
-                        {attackHistory.slice(0, 10).map((log) => (
+                        {attackHistory.slice(0, 10).map((log: any) => (
                             <div
                                 key={log.id}
                                 className={`p-3 rounded border ${log.success
@@ -156,7 +161,6 @@ export function GameClientWrapper({
                     onClose={() => setSelectedSafe(null)}
                     onSuccess={() => {
                         console.log("Safe cracked!");
-                        // Keep modal open to show success message
                     }}
                 />
             )}

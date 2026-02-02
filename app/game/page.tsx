@@ -28,7 +28,7 @@ export default async function GamePage() {
         );
     }
 
-    const successfulAttacks = attackHistory.filter((log) => log.success).length;
+    const successfulAttacks = attackHistory.filter((log: any) => log.success).length;
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">

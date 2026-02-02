@@ -5,7 +5,6 @@ import { ThemeConfig } from "@/lib/themes";
 import { buyTheme, equipTheme } from "@/actions/shop";
 import { Loader2, Check, Lock, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner"; // If you have sonner, otherwise console/alert
 
 interface ThemeCardProps {
     theme: ThemeConfig;
@@ -73,7 +72,7 @@ export function ThemeCard({ theme, isUnlocked, isEquipped, userCredits, userStyl
                             )}
                             {theme.priceStylePoints > 0 && (
                                 <span className="flex items-center gap-1 text-pink-400">
-                                    <Zap className="w-3 h-3" /> {theme.priceStylePoints} PTS
+                                    <Zap className="w-3 h-3" /> {theme.priceStylePoints} PE
                                 </span>
                             )}
                             {theme.priceCredits === 0 && theme.priceStylePoints === 0 && (

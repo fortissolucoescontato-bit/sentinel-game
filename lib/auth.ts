@@ -14,8 +14,8 @@ export async function getServerSideUser() {
     }
 
     // 1. Check if user exists in DB by Clerk ID
-    const { data: existingUser, error: findError } = await supabase
-        .from('users')
+    const { data: existingUser, error: findError } = await (supabase
+        .from('users') as any)
         .select('*')
         .eq('clerk_id', clerkId)
         .single();
@@ -42,16 +42,16 @@ export async function getServerSideUser() {
     // 2. Also check if user exists by email (for legacy users or manual creations)
     const email = user.emailAddresses[0]?.emailAddress;
     if (email) {
-        const { data: existingUserByEmail, error: emailFindError } = await supabase
-            .from('users')
+        const { data: existingUserByEmail, error: emailFindError } = await (supabase
+            .from('users') as any)
             .select('*')
             .eq('email', email)
             .single();
 
         if (existingUserByEmail) {
             // Link the existing user to this Clerk ID
-            const { error: updateError } = await supabase
-                .from('users')
+            const { error: updateError } = await (supabase
+                .from('users') as any)
                 .update({ clerk_id: clerkId })
                 .eq('id', existingUserByEmail.id);
 
@@ -72,8 +72,8 @@ export async function getServerSideUser() {
             username = `${base}_${Math.floor(Math.random() * 1000)}`;
         }
 
-        const { data: newUser, error: createError } = await supabase
-            .from('users')
+        const { data: newUser, error: createError } = await (supabase
+            .from('users') as any)
             .insert({
                 clerk_id: clerkId,
                 email: email || `no-email-${clerkId}@example.com`,

@@ -8,8 +8,8 @@ import { GAME_CONFIG } from "@/lib/game-config";
  */
 export async function getUserProfile(userId: number) {
     try {
-        const { data: user, error } = await supabase
-            .from('users')
+        const { data: user, error } = await (supabase
+            .from('users') as any)
             .select(`
                 *,
                 safes(*)
@@ -31,6 +31,7 @@ export async function getUserProfile(userId: number) {
                 secretWord: s.secret_word,
                 systemPrompt: s.system_prompt,
                 defenseLevel: s.defense_level,
+                mode: s.mode || 'classic',
                 createdAt: s.created_at,
                 updatedAt: s.updated_at
             })).sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
@@ -47,8 +48,8 @@ export async function getUserProfile(userId: number) {
  */
 export async function getUserByEmail(email: string) {
     try {
-        const { data: user, error } = await supabase
-            .from('users')
+        const { data: user, error } = await (supabase
+            .from('users') as any)
             .select('*')
             .eq('email', email)
             .single();
@@ -65,8 +66,8 @@ export async function getUserByEmail(email: string) {
  */
 export async function getUserByUsername(username: string) {
     try {
-        const { data: user, error } = await supabase
-            .from('users')
+        const { data: user, error } = await (supabase
+            .from('users') as any)
             .select('*')
             .eq('username', username)
             .single();
@@ -83,8 +84,8 @@ export async function getUserByUsername(username: string) {
  */
 export async function updateUserCredits(userId: number, credits: number) {
     try {
-        const { data: updatedUser, error } = await supabase
-            .from('users')
+        const { data: updatedUser, error } = await (supabase
+            .from('users') as any)
             .update({ credits, updated_at: new Date().toISOString() })
             .eq('id', userId)
             .select()
@@ -106,7 +107,8 @@ export async function createSafe(
     secretWord: string,
     systemPrompt: string,
     defenseLevel: number = 1,
-    theme: string = 'dracula'
+    theme: string = 'dracula',
+    mode: string = 'classic'
 ) {
     try {
         // Validate inputs
@@ -122,24 +124,25 @@ export async function createSafe(
             throw new Error("O nível de defesa deve estar entre 1 e 5");
         }
 
-        const { data: result, error } = await supabase.rpc('create_safe_transaction', {
+        const { data: result, error } = await (supabase as any).rpc('create_safe_transaction', {
             p_user_id: userId,
             p_secret_word: secretWord.trim(),
             p_system_prompt: systemPrompt.trim(),
             p_defense_level: defenseLevel,
             p_cost: GAME_CONFIG.SAFE_CREATION_COST,
-            p_theme: theme
+            p_theme: theme,
+            p_mode: mode
         });
 
         if (error) throw error;
 
         // Fetch the created safe to return full object as expected by caller
         // RPC returns { success: true, safe_id: 123 }
-        if (result && result.safe_id) {
-            const { data: newSafe } = await supabase
-                .from('safes')
+        if (result && (result as any).safe_id) {
+            const { data: newSafe } = await (supabase
+                .from('safes') as any)
                 .select('*')
-                .eq('id', result.safe_id)
+                .eq('id', (result as any).safe_id)
                 .single();
 
             if (newSafe) {
@@ -171,8 +174,8 @@ export async function updateSafeDefense(
 ) {
     try {
         // Check if safe exists
-        const { data: safe, error: checkError } = await supabase
-            .from('safes')
+        const { data: safe, error: checkError } = await (supabase
+            .from('safes') as any)
             .select('id')
             .eq('id', safeId)
             .single();
@@ -181,8 +184,8 @@ export async function updateSafeDefense(
             throw new Error("Safe not found");
         }
 
-        const { data: updatedSafe, error } = await supabase
-            .from('safes')
+        const { data: updatedSafe, error } = await (supabase
+            .from('safes') as any)
             .update({
                 system_prompt: systemPrompt,
                 defense_level: defenseLevel,
@@ -212,8 +215,8 @@ export async function updateSafeDefense(
  */
 export async function getSafeById(safeId: number) {
     try {
-        const { data: safe, error } = await supabase
-            .from('safes')
+        const { data: safe, error } = await (supabase
+            .from('safes') as any)
             .select(`
                 *,
                 user:users(id, username, tier)
@@ -242,8 +245,8 @@ export async function getSafeById(safeId: number) {
  */
 export async function getUserSafes(userId: number) {
     try {
-        const { data: userSafes, error } = await supabase
-            .from('safes')
+        const { data: userSafes, error } = await (supabase
+            .from('safes') as any)
             .select('*')
             .eq('user_id', userId)
             .order('created_at', { ascending: false });
@@ -270,7 +273,7 @@ export async function getLeaderboard(limit = 10) {
     try {
         // Redundant with interactions/leaderboard.ts but implementing for compatibility
         // Use RPC for consistency
-        const { data: topDefenders, error } = await supabase
+        const { data: topDefenders, error } = await (supabase as any)
             .rpc('get_top_defenders', { p_limit: limit });
 
         if (error) throw error;
@@ -284,8 +287,8 @@ export async function getLeaderboard(limit = 10) {
         // Let's assume this generic 'getLeaderboard' implies the main one, typically Hackers (Credits).
 
         // Reverting to fetch Top Hackers (Credits) via standard select, as there is no specific RPC needed for simple sorting.
-        const { data: topUsers, error: usersError } = await supabase
-            .from('users')
+        const { data: topUsers, error: usersError } = await (supabase
+            .from('users') as any)
             .select('id, username, credits, tier')
             .order('credits', { ascending: false })
             .limit(limit);

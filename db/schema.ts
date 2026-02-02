@@ -26,6 +26,7 @@ export const safes = pgTable("safes", {
     systemPrompt: text("system_prompt").notNull(),
     theme: varchar("theme", { length: 50 }).notNull().default("dracula"), // Visual theme of the safe
     defenseLevel: integer("defense_level").notNull().default(1), // 1-5
+    mode: varchar("mode", { length: 20 }).notNull().default("classic"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

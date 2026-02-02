@@ -36,8 +36,7 @@ export function AvailableTargets({ safes, userThemeId }: AvailableTargetsProps) 
     const officialSafes = safes.filter(s => s.user.tier === 'system' || s.user.username === 'SENTINEL_CORE');
     const communitySafes = safes.filter(s => s.user.tier !== 'system' && s.user.username !== 'SENTINEL_CORE');
 
-    // Default tab: If there are official safes, show them? Or show Community? 
-    // Usually standard game progression starts with official.
+    // Default tab
     const [activeTab, setActiveTab] = useState("community");
 
     const handleAttack = (safe: AvailableTarget) => {
@@ -74,7 +73,7 @@ export function AvailableTargets({ safes, userThemeId }: AvailableTargetsProps) 
     const SafeGrid = ({ items, emptyMessage }: { items: AvailableTarget[], emptyMessage: string }) => (
         <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {items.map((safe) => (
+                {items.map((safe: any) => (
                     <div
                         key={safe.id}
                         className={`p-4 rounded-lg border-2 transition-all duration-300 ${getDifficultyColor(
@@ -122,8 +121,8 @@ export function AvailableTargets({ safes, userThemeId }: AvailableTargetsProps) 
                         <Button
                             onClick={() => handleAttack(safe)}
                             className={`w-full font-mono text-sm ${safe.isUnlocked
-                                    ? "bg-green-600/20 hover:bg-green-600/30 text-green-400 border border-green-500/50"
-                                    : "bg-cyan-600 hover:bg-cyan-500 text-white"
+                                ? "bg-green-600/20 hover:bg-green-600/30 text-green-400 border border-green-500/50"
+                                : "bg-cyan-600 hover:bg-cyan-500 text-white"
                                 }`}
                             size="sm"
                         >
@@ -142,64 +141,60 @@ export function AvailableTargets({ safes, userThemeId }: AvailableTargetsProps) 
     );
 
     return (
-        <>
-            <div className="w-full space-y-6">
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <h2 className="flex items-center gap-2 text-xl font-bold text-cyan-400 font-mono">
-                        <Target className="w-6 h-6" />
-                        ALVOS DISPONÍVEIS
-                    </h2>
+        <div className="w-full space-y-6">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <h2 className="flex items-center gap-2 text-xl font-bold text-cyan-400 font-mono">
+                    <Target className="w-6 h-6" />
+                    ALVOS DISPONÍVEIS
+                </h2>
 
-                    <div className="flex bg-slate-900 border border-slate-800 p-1 rounded-lg">
-                        <button
-                            onClick={() => setActiveTab("community")}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-md font-mono text-sm transition-all ${activeTab === "community"
-                                ? "bg-cyan-950 text-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.2)]"
-                                : "text-slate-400 hover:text-slate-200"
-                                }`}
-                        >
-                            <Users className="w-4 h-4" />
-                            COMUNIDADE
-                        </button>
-                        <button
-                            onClick={() => setActiveTab("official")}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-md font-mono text-sm transition-all ${activeTab === "official"
-                                ? "bg-purple-950 text-purple-400 shadow-[0_0_10px_rgba(168,85,247,0.2)]"
-                                : "text-slate-400 hover:text-slate-200"
-                                }`}
-                        >
-                            <Crown className="w-4 h-4" />
-                            OFICIAIS
-                        </button>
-                    </div>
+                <div className="flex bg-slate-900 border border-slate-800 p-1 rounded-lg">
+                    <button
+                        onClick={() => setActiveTab("community")}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-md font-mono text-sm transition-all ${activeTab === "community"
+                            ? "bg-cyan-950 text-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.2)]"
+                            : "text-slate-400 hover:text-slate-200"
+                            }`}
+                    >
+                        <Users className="w-4 h-4" />
+                        COMUNIDADE
+                    </button>
+                    <button
+                        onClick={() => setActiveTab("official")}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-md font-mono text-sm transition-all ${activeTab === "official"
+                            ? "bg-purple-950 text-purple-400 shadow-[0_0_10px_rgba(168,85,247,0.2)]"
+                            : "text-slate-400 hover:text-slate-200"
+                            }`}
+                    >
+                        <Crown className="w-4 h-4" />
+                        OFICIAIS
+                    </button>
                 </div>
-
-                <Card className="bg-slate-900/50 border-slate-800">
-                    <CardContent className="pt-6">
-                        {activeTab === "community" ? (
-                            <SafeGrid
-                                items={communitySafes}
-                                emptyMessage="Nenhum alvo da comunidade disponível. Todos os cofres foram quebrados!"
-                            />
-                        ) : (
-                            <SafeGrid
-                                items={officialSafes}
-                                emptyMessage="Nenhum desafio oficial disponível no momento."
-                            />
-                        )}
-                    </CardContent>
-                </Card>
             </div>
+
+            <Card className="bg-slate-900/50 border-slate-800">
+                <CardContent className="pt-6">
+                    {activeTab === "community" ? (
+                        <SafeGrid
+                            items={communitySafes}
+                            emptyMessage="Nenhum alvo da comunidade disponível. Todos os cofres foram quebrados!"
+                        />
+                    ) : (
+                        <SafeGrid
+                            items={officialSafes}
+                            emptyMessage="Nenhum desafio oficial disponível no momento."
+                        />
+                    )}
+                </CardContent>
+            </Card>
 
             {/* Attack Dialog */}
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent className="max-w-5xl bg-slate-950 border-slate-800 p-0 overflow-hidden">
-                    <DialogHeader className="px-6 pt-6">
-                        <DialogTitle className="text-cyan-400 font-mono">
-                            ATACANDO: Cofre de {selectedSafe?.user.username}
-                        </DialogTitle>
-                        <DialogDescription className="text-slate-400 font-mono text-xs">
-                            Nível de Defesa: {selectedSafe?.defenseLevel}/5 | Custo: 10 créditos
+                    <DialogHeader className="px-6 pt-6 sr-only">
+                        <DialogTitle>ATACANDO: {selectedSafe?.user.username}</DialogTitle>
+                        <DialogDescription>
+                            Iniciando conexão terminal...
                         </DialogDescription>
                     </DialogHeader>
 
@@ -209,11 +204,13 @@ export function AvailableTargets({ safes, userThemeId }: AvailableTargetsProps) 
                             safeName={`${selectedSafe.user.username} (Cofre)`}
                             defenseLevel={selectedSafe.defenseLevel}
                             onSuccess={handleSuccess}
-                            themeId={selectedSafe.theme || 'dracula'} // Use target's theme
+                            themeId={selectedSafe.theme || 'dracula'}
+                            mode={selectedSafe.mode}
+                            secretWord={selectedSafe.secretWord}
                         />
                     )}
                 </DialogContent>
             </Dialog>
-        </>
+        </div>
     );
 }

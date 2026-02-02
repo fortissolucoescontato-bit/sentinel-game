@@ -20,11 +20,6 @@ interface HackResult {
 
 import { GAME_CONFIG } from "@/lib/game-config";
 
-// Remove local constants
-// const ATTACK_COST = 10;
-// const REWARD_FOR_SUCCESS = 100;
-
-
 // Configure Groq Provider
 if (!process.env.GROQ_API_KEY) {
     throw new Error("GROQ_API_KEY is not set in environment variables");
@@ -55,7 +50,6 @@ export async function hackSafe(
         // Agora temos certeza que é o usuário logado
         const attackerId = attacker.id;
 
-        // 1. Validate inputs
         // 1. Validate inputs
         if (!inputPrompt || inputPrompt.trim().length < 3) {
             return {
@@ -102,13 +96,13 @@ export async function hackSafe(
         }
 
         // 4. Get safe info with owner
-        const { data: safe, error: safeError } = await supabase
+        const { data: safeDataRaw, error: safeError } = await supabase
             .from('safes')
             .select('*')
             .eq('id', safeId)
             .single();
 
-        if (safeError || !safe) {
+        if (safeError || !safeDataRaw) {
             return {
                 success: false,
                 reply: "Sistema alvo não encontrado na rede.",
@@ -117,13 +111,16 @@ export async function hackSafe(
             };
         }
 
+        const safe = safeDataRaw as any;
+
         // Map snake_case to camelCase and define safeData for consistency
         const safeData = {
-            ...safe,
+            ...(safe as any),
             userId: safe.user_id,
             secretWord: safe.secret_word,
             systemPrompt: safe.system_prompt,
             defenseLevel: safe.defense_level,
+            mode: safe.mode || 'classic'
         };
 
         // 5. Check if attacker has already cracked this safe
@@ -135,11 +132,13 @@ export async function hackSafe(
             .single();
 
         // Allow re-hacking if it's a SYSTEM safe
-        const { data: safeOwner } = await supabase
+        const { data: safeOwnerData } = await supabase
             .from('users')
             .select('tier')
             .eq('id', safeData.userId)
             .single();
+
+        const safeOwner = safeOwnerData as any;
 
         if (existingUnlock && (!safeOwner || safeOwner.tier !== 'system')) {
             return {
@@ -155,7 +154,7 @@ export async function hackSafe(
             return {
                 success: false,
                 reply: "Impossível executar ataque no sistema local (Auto-Hack prevenido).",
-                creditsSpent: 0,
+                creditsSpent: 0, // No cost
                 error: "Não pode atacar o próprio cofre",
             };
         }
@@ -258,8 +257,8 @@ Start interactions now.
         const newCredits = attacker.credits - GAME_CONFIG.ATTACK_COST + (success ? GAME_CONFIG.REWARD_FOR_SUCCESS : 0);
         const newStylePoints = attacker.stylePoints + stylePointsAwarded;
 
-        const { error: userUpdateError } = await supabase
-            .from('users')
+        const { error: userUpdateError } = await (supabase
+            .from('users') as any)
             .update({
                 credits: newCredits,
                 style_points: newStylePoints,
@@ -275,8 +274,8 @@ Start interactions now.
 
         // B. Unlock Safe (if success)
         if (success) {
-            const { error: unlockError } = await supabase
-                .from('unlocked_safes')
+            const { error: unlockError } = await (supabase
+                .from('unlocked_safes') as any)
                 .insert({
                     user_id: attackerId,
                     safe_id: safeId,
@@ -286,8 +285,8 @@ Start interactions now.
         }
 
         // C. Log Attack
-        const { error: logError } = await supabase
-            .from('logs')
+        const { error: logError } = await (supabase
+            .from('logs') as any)
             .insert({
                 attacker_id: attackerId,
                 defender_id: safeData.userId,
@@ -329,12 +328,9 @@ Start interactions now.
 /**
  * Get available safes to attack (excluding user's own safes and already cracked BY THIS USER)
  */
-/**
- * Get available safes to attack (excluding user's own safes and already cracked BY THIS USER)
- */
 export async function getAvailableSafes(userId: number) {
     try {
-        const { data: safes, error } = await supabase.rpc('get_available_safes', {
+        const { data: safes, error } = await (supabase as any).rpc('get_available_safes', {
             p_user_id: userId,
             p_limit: 50
         });
@@ -352,6 +348,7 @@ export async function getAvailableSafes(userId: number) {
             system_prompt: safe.system_prompt,
             theme: safe.theme,
             defense_level: safe.defense_level,
+            mode: safe.mode || 'classic',
             created_at: safe.created_at,
             updated_at: safe.updated_at,
             // Computed/Joined fields
@@ -376,8 +373,8 @@ export async function getAvailableSafes(userId: number) {
  */
 export async function getAttackHistory(userId: number, limit = 10) {
     try {
-        const { data: history, error } = await supabase
-            .from('logs')
+        const { data: history, error } = await (supabase
+            .from('logs' as any) as any)
             .select(`
                 *,
                 defender:users!defender_id(id, username),

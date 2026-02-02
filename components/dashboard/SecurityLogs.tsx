@@ -67,7 +67,6 @@ export function SecurityLogs({ logs }: SecurityLogsProps) {
                         <Activity className="w-5 h-5" />
                         LOGS DE AUDITORIA DE SEGURANÇA
                     </CardTitle>
-                    {/* Notification Badge could go here */}
                 </CardHeader>
                 <CardContent>
                     {logs.length === 0 ? (
@@ -87,7 +86,7 @@ export function SecurityLogs({ logs }: SecurityLogsProps) {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {logs.map((log) => (
+                                    {logs.map((log: any) => (
                                         <TableRow
                                             key={log.id}
                                             className={`border-slate-800 hover:bg-slate-900/50 font-mono text-xs transition-colors cursor-pointer ${log.success ? "bg-red-950/10 hover:bg-red-950/20" : ""

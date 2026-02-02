@@ -1,7 +1,7 @@
 "use client";
 
 import { GlitchText } from "@/components/ui/glitch-text";
-import { Terminal, Shield } from "lucide-react";
+import { Terminal, Cpu, Zap, Shield } from "lucide-react";
 import Link from "next/link";
 
 export default function Home() {
@@ -29,7 +29,9 @@ export default function Home() {
           &gt; Status do Sistema: <span className="text-green-400 animate-pulse">ONLINE</span>
         </p>
 
-
+        <p className="text-sm md:text-base text-slate-400 font-mono mb-12 max-w-2xl text-center">
+          Quebre as defesas, roube os segredos. O simulador de hacking definitivo com IA.
+        </p>
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 mb-16">
@@ -49,7 +51,29 @@ export default function Home() {
           </Link>
         </div>
 
-
+        {/* Feature Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl mt-8">
+          <FeatureCard
+            icon={<Terminal className="w-8 h-8" />}
+            title="Invasão IA"
+            description="Use engenharia social para extrair senhas de modelos de linguagem reais."
+          />
+          <FeatureCard
+            icon={<Cpu className="w-8 h-8" />}
+            title="Defesa Ativa"
+            description="Crie prompts de sistema inteligentes para proteger seu próprio cofre."
+          />
+          <FeatureCard
+            icon={<Zap className="w-8 h-8" />}
+            title="Hacking Rápido"
+            description="Interface de terminal otimizada com efeitos visuais cyberpunk."
+          />
+          <FeatureCard
+            icon={<Shield className="w-8 h-8" />}
+            title="Análise Forense"
+            description="Inspecione os ataques recebidos para aprender com as vulnerabilidades."
+          />
+        </div>
 
         {/* Status Bar */}
         <div className="fixed bottom-0 left-0 right-0 bg-slate-950/80 backdrop-blur-sm border-t border-cyan-500/20 px-6 py-3">
@@ -57,10 +81,10 @@ export default function Home() {
             <div className="flex items-center gap-4 text-xs font-mono">
               <span className="text-green-400">● PRONTO</span>
               <span className="text-slate-500">|</span>
-              <span className="text-cyan-400">v1.0.0</span>
+              <span className="text-cyan-400">v1.2.0</span>
             </div>
             <div className="flex items-center gap-2 text-xs font-mono text-slate-400">
-              <span className="hidden md:inline">MODO_CYBERPUNK_LIMPO</span>
+              <span className="hidden md:inline">MODO_CYBERPUNK</span>
               <div className="flex gap-1">
                 <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
                 <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse delay-150" />
@@ -101,4 +125,30 @@ export default function Home() {
   );
 }
 
+interface FeatureCardProps {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+}
 
+function FeatureCard({ icon, title, description }: FeatureCardProps) {
+  return (
+    <div className="group relative">
+      {/* Glow Effect */}
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-lg opacity-0 group-hover:opacity-20 blur transition duration-500" />
+
+      {/* Card */}
+      <div className="relative bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-lg p-6 hover:border-cyan-500/50 transition-all duration-300">
+        <div className="text-cyan-400 mb-4 group-hover:scale-110 transition-transform duration-300">
+          {icon}
+        </div>
+        <h3 className="text-lg font-bold text-slate-100 mb-2 font-mono">
+          {title}
+        </h3>
+        <p className="text-sm text-slate-400">
+          {description}
+        </p>
+      </div>
+    </div>
+  );
+}

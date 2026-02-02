@@ -17,6 +17,33 @@ export function CreateSafeForm({ userCredits, unlockedThemes }: { userCredits: n
 
     return (
         <form action={formAction} className="space-y-6 max-w-2xl mx-auto">
+            {/* Game Mode Selection */}
+            <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-mono text-green-400">
+                    <Cpu className="w-4 h-4" />
+                    MODO DE JOGO
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                    <label className="cursor-pointer">
+                        <input type="radio" name="mode" value="classic" className="peer sr-only" defaultChecked />
+                        <div className="p-3 rounded border border-slate-700 bg-slate-900 peer-checked:border-green-500 peer-checked:bg-green-900/20 transition-all text-center">
+                            <span className="text-sm font-bold font-mono block text-green-400">CLÁSSICO</span>
+                            <span className="text-xs text-slate-500 block mt-1">Adivinhar Senha</span>
+                        </div>
+                    </label>
+                    <label className="cursor-pointer">
+                        <input type="radio" name="mode" value="injection" className="peer sr-only" />
+                        <div className="p-3 rounded border border-slate-700 bg-slate-900 peer-checked:border-green-500 peer-checked:bg-green-900/20 transition-all text-center">
+                            <span className="text-sm font-bold font-mono block text-green-400">INJEÇÃO</span>
+                            <span className="text-xs text-slate-500 block mt-1">Forçar Frase</span>
+                        </div>
+                    </label>
+                </div>
+                <p className="text-xs text-slate-500 font-mono">
+                    Clássico: Esconda uma senha. Injeção: Faça a IA dizer uma frase específica.
+                </p>
+            </div>
+
             {/* Theme Selection */}
             <div className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-mono text-pink-400">
@@ -24,7 +51,7 @@ export function CreateSafeForm({ userCredits, unlockedThemes }: { userCredits: n
                     TEMA DO TERMINAL
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    {availableThemes.map((themeId) => {
+                    {availableThemes.map((themeId: any) => {
                         const theme = THEMES[themeId as ThemeId];
                         if (!theme) return null;
                         return (
@@ -46,7 +73,7 @@ export function CreateSafeForm({ userCredits, unlockedThemes }: { userCredits: n
             <div className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-mono text-cyan-400">
                     <Lock className="w-4 h-4" />
-                    SENHA SECRETA
+                    SENHA SECRETA (ou Frase Alvo)
                 </label>
                 <input
                     name="secretWord"
@@ -58,7 +85,7 @@ export function CreateSafeForm({ userCredits, unlockedThemes }: { userCredits: n
                     <p className="text-red-400 text-xs font-mono">{state.fieldErrors.secretWord}</p>
                 )}
                 <p className="text-xs text-slate-500 font-mono">
-                    A palavra exata que os hackers precisam adivinhar. Case-insensitive.
+                    A palavra exata que os hackers precisam adivinhar (Clássico) ou fazer a IA dizer (Injeção).
                 </p>
             </div>
 
@@ -127,6 +154,6 @@ export function CreateSafeForm({ userCredits, unlockedThemes }: { userCredits: n
                     {isPending ? "IMPLANTANDO DEFESAS..." : canAfford ? "CRIAR COFRE" : "CRÉDITOS INSUFICIENTES"}
                 </button>
             </div>
-        </form >
+        </form>
     );
 }

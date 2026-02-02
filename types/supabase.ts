@@ -58,6 +58,7 @@ export interface Database {
                     system_prompt: string
                     defense_level: number
                     theme: string
+                    mode: 'classic' | 'injection'
                     created_at: string
                     updated_at: string
                 }
@@ -68,6 +69,7 @@ export interface Database {
                     system_prompt: string
                     defense_level?: number
                     theme?: string
+                    mode?: 'classic' | 'injection'
                     created_at?: string
                     updated_at?: string
                 }
@@ -78,6 +80,7 @@ export interface Database {
                     system_prompt?: string
                     defense_level?: number
                     theme?: string
+                    mode?: 'classic' | 'injection'
                     created_at?: string
                     updated_at?: string
                 }
@@ -137,6 +140,43 @@ export interface Database {
                     unlocked_at?: string
                 }
             }
+        }
+        Views: {
+            [_ in never]: never
+        }
+        Functions: {
+            get_attack_history: {
+                Args: {
+                    p_user_id: number
+                    p_limit: number
+                }
+                Returns: any[]
+            }
+            get_available_safes: {
+                Args: {
+                    p_user_id: number
+                }
+                Returns: any[]
+            }
+            get_user_rank: {
+                Args: {
+                    p_user_id: number
+                }
+                Returns: number
+            }
+            create_safe_transaction: {
+                Args: {
+                    p_user_id: number
+                    p_secret_word: string
+                    p_system_prompt: string
+                    p_cost: number
+                    p_mode?: string
+                }
+                Returns: number
+            }
+        }
+        Enums: {
+            [_ in never]: never
         }
     }
 }

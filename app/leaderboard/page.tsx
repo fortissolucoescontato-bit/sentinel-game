@@ -62,7 +62,7 @@ export default async function LeaderboardPage() {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {topHackers.map((hacker, i) => (
+                                    {topHackers.map((hacker: any, i: number) => (
                                         <TableRow key={hacker.id} className="border-slate-800 hover:bg-cyan-950/10 transition-colors">
                                             <TableCell className="font-bold flex justify-center items-center py-4">
                                                 {getRankIcon(i)}
@@ -112,7 +112,7 @@ export default async function LeaderboardPage() {
                                             </TableCell>
                                         </TableRow>
                                     ) : (
-                                        topDefenders.map((defender, i) => (
+                                        topDefenders.map((defender: any, i: number) => (
                                             <TableRow key={defender.id} className="border-slate-800 hover:bg-purple-950/10 transition-colors">
                                                 <TableCell className="font-bold flex justify-center items-center py-4">
                                                     {getRankIcon(i)}

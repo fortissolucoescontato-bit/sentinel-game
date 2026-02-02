@@ -82,7 +82,7 @@ export function LeaderboardTable({ hackers }: LeaderboardTableProps) {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {hackers.map((hacker, index) => (
+                            {hackers.map((hacker: LeaderboardEntry, index: number) => (
                                 <TableRow
                                     key={hacker.id}
                                     className="border-slate-800 hover:bg-slate-900/50 transition-colors"

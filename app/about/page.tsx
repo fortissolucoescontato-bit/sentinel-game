@@ -15,7 +15,7 @@ export default function AboutPage() {
                             PROTOCOLO_SENTINELA
                         </h1>
                         <p className="text-slate-400 font-mono text-sm">
-                            V 1.0.0 // Simulação de Hacking IA
+                            V 1.2.0 // Simulação de Hacking IA
                         </p>
                     </div>
                 </div>
@@ -37,7 +37,7 @@ export default function AboutPage() {
                     <p>
                         <span className="text-green-400 font-bold">&gt; TECNOLOGIAS:</span>
                         <br />
-                        Construído sobre o framework Next.js 16, utilizando modelos de IA avançados (Llama 3 via Groq) para geração de resposta dinâmica em tempo real. Autenticado via Clerk.
+                        Construído sobre o framework Next.js 15, utilizando modelos de IA avançados via AI SDK da Vercel para geração de resposta dinâmica em tempo real. Banco de dados Supabase e autenticação Clerk.
                     </p>
 
                     <div className="bg-slate-950 p-4 border border-slate-800 rounded font-mono text-xs text-slate-500">

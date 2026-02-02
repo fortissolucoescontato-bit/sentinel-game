@@ -6,7 +6,7 @@ import { HackTerminal } from "./HackTerminal";
 import type { Safe } from "@/db/schema";
 
 interface HackModalProps {
-    safe: Safe & { user: { username: string } };
+    safe: Safe & { user: { username: string }, mode?: string };
     onClose: () => void;
     onSuccess: () => void;
 }
@@ -41,15 +41,16 @@ export function HackModal({ safe, onClose, onSuccess }: HackModalProps) {
                 <div className="flex items-center justify-between p-4 border-b border-slate-800 bg-slate-900/50">
                     <div>
                         <h2 className="text-xl font-bold font-mono text-cyan-400 flex items-center gap-2">
-                            ATACANDO: Cofre de {safe.user.username}
+                            ATACANDO: {safe.user.username}
                         </h2>
                         <div className="flex items-center gap-3 text-xs font-mono text-slate-400 mt-1">
                             <span className="flex items-center gap-1">
                                 <Shield className="w-3 h-3" />
-                                Nível de Defesa: {safe.defenseLevel}/5
+                                Defesa: Nível {safe.defenseLevel}
                             </span>
-                            <span>|</span>
-                            <span>Custo: 10 créditos</span>
+                            {safe.mode === "injection" && (
+                                <span className="text-yellow-500 font-bold border border-yellow-500/30 px-1 rounded">MODO INJEÇÃO</span>
+                            )}
                         </div>
                     </div>
                     <button
@@ -61,12 +62,14 @@ export function HackModal({ safe, onClose, onSuccess }: HackModalProps) {
                 </div>
 
                 {/* Modal Content - Terminal */}
-                <div className="flex-1 p-4 overflow-hidden bg-slate-950">
+                <div className="flex-1 p-0 overflow-hidden bg-slate-950">
                     <HackTerminal
                         safeId={safe.id}
                         safeName={`Cofre de ${safe.user.username}`}
                         defenseLevel={safe.defenseLevel}
                         themeId={safe.theme}
+                        mode={safe.mode}
+                        secretWord={safe.secretWord}
                         onSuccess={onSuccess}
                     />
                 </div>

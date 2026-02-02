@@ -13,6 +13,7 @@ interface DashboardStatsProps {
             total: number;
             successful: number;
             failed: number;
+            successRate?: number; // Added to match some variations
             defenseRate: number;
         };
     };
