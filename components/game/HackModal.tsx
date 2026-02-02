@@ -30,12 +30,12 @@ export function HackModal({ safe, onClose, onSuccess }: HackModalProps) {
 
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-0 sm:p-4 animate-in fade-in duration-200"
             onClick={handleBackdropClick}
         >
             <div
                 ref={modalRef}
-                className="w-full max-w-5xl h-[90vh] md:h-[80vh] bg-slate-950 border border-slate-800 rounded-lg shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
+                className="w-full max-w-5xl h-[90dvh] md:h-[80vh] bg-slate-950 border border-slate-800 rounded-lg shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
             >
                 {/* Modal Header */}
                 <div className="flex items-center justify-between p-4 border-b border-slate-800 bg-slate-900/50">
