@@ -6,6 +6,7 @@ import { db } from "@/db";
 import { users, safes, logs, unlockedSafes } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getServerSideUser } from "@/lib/auth";
+import { checkRateLimit } from "@/lib/ratelimit";
 
 interface HackResult {
     success: boolean;
@@ -59,6 +60,18 @@ export async function hackSafe(
                 error: "Entrada inválida",
             };
         }
+
+        // 1.5 Rate Limit Check
+        const rateLimit = await checkRateLimit(attackerId);
+        if (!rateLimit.success) {
+            return {
+                success: false,
+                reply: `⚠️ ALERTA DE SISTEMA: Sobrecarga Térmica Detectada. Resfriando processadores... (Tente novamente em alguns segundos)`,
+                creditsSpent: 0,
+                error: "Rate limit exceeded",
+            };
+        }
+
 
         // 2. Attacker info já veio do getServerSideUser
 
