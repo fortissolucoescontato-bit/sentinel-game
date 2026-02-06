@@ -17,12 +17,8 @@ import {
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
-<<<<<<< HEAD
-=======
 import { DailyRewardButton } from "@/components/dashboard/DailyRewardButton";
 import { ShoppingCart } from "lucide-react";
-
->>>>>>> c9e6572 (chore: fix build errors, update game logic flow documentation and add tests)
 
 // --- Server Components ---
 
