@@ -4,6 +4,7 @@ export const GAME_CONFIG = {
     SAFE_CREATION_COST: 500,
     REWARD_FOR_SUCCESS: 100,
     STYLE_POINTS_MULTIPLIER: 5,
+    DAILY_REWARD_AMOUNT: 50,
     TIERS: {
         NOVATO: {
             LIMIT: 5000,
