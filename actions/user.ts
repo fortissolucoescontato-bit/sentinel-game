@@ -2,41 +2,27 @@
 
 import { supabase } from "@/lib/supabase";
 import { GAME_CONFIG } from "@/lib/game-config";
+import { db } from "@/db";
+import { users, safes } from "@/db/schema";
+import { eq, desc } from "drizzle-orm";
 
 /**
  * Get user by ID with their safes
  */
 export async function getUserProfile(userId: number) {
     try {
-        const { data: user, error } = await (supabase
-            .from('users') as any)
-            .select(`
-                *,
-                safes(*)
-            `)
-            .eq('id', userId)
-            .single();
+        const user = await db.query.users.findFirst({
+            where: eq(users.id, userId),
+            with: {
+                safes: {
+                    orderBy: [desc(safes.createdAt)]
+                }
+            }
+        });
 
-        if (error) {
-            console.error("Error getting user profile:", error);
-            return null;
-        }
+        if (!user) return null;
 
-        // Map to camelCase
-        return {
-            ...user,
-            safes: user.safes?.map((s: any) => ({
-                ...s,
-                userId: s.user_id,
-                secretWord: s.secret_word,
-                systemPrompt: s.system_prompt,
-                defenseLevel: s.defense_level,
-                mode: s.mode || 'classic',
-                createdAt: s.created_at,
-                updatedAt: s.updated_at
-            })).sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-        };
-
+        return user;
     } catch (error) {
         console.error("Error getting user profile:", error);
         return null;
@@ -48,13 +34,10 @@ export async function getUserProfile(userId: number) {
  */
 export async function getUserByEmail(email: string) {
     try {
-        const { data: user, error } = await (supabase
-            .from('users') as any)
-            .select('*')
-            .eq('email', email)
-            .single();
-
-        return user;
+        const user = await db.query.users.findFirst({
+            where: eq(users.email, email)
+        });
+        return user || null;
     } catch (error) {
         console.error("Error getting user by email:", error);
         return null;
@@ -66,13 +49,10 @@ export async function getUserByEmail(email: string) {
  */
 export async function getUserByUsername(username: string) {
     try {
-        const { data: user, error } = await (supabase
-            .from('users') as any)
-            .select('*')
-            .eq('username', username)
-            .single();
-
-        return user;
+        const user = await db.query.users.findFirst({
+            where: eq(users.username, username)
+        });
+        return user || null;
     } catch (error) {
         console.error("Error getting user by username:", error);
         return null;
@@ -84,15 +64,15 @@ export async function getUserByUsername(username: string) {
  */
 export async function updateUserCredits(userId: number, credits: number) {
     try {
-        const { data: updatedUser, error } = await (supabase
-            .from('users') as any)
-            .update({ credits, updated_at: new Date().toISOString() })
-            .eq('id', userId)
-            .select()
-            .single();
+        const [updatedUser] = await db.update(users)
+            .set({
+                credits,
+                updatedAt: new Date()
+            })
+            .where(eq(users.id, userId))
+            .returning();
 
-        if (error) throw error;
-        return updatedUser;
+        return updatedUser || null;
     } catch (error) {
         console.error("Error updating user credits:", error);
         return null;
@@ -213,27 +193,28 @@ export async function updateSafeDefense(
 /**
  * Get safe by ID
  */
+/**
+ * Get safe by ID
+ */
 export async function getSafeById(safeId: number) {
     try {
-        const { data: safe, error } = await (supabase
-            .from('safes') as any)
-            .select(`
-                *,
-                user:users(id, username, tier)
-            `)
-            .eq('id', safeId)
-            .single();
+        const safe = await db.query.safes.findFirst({
+            where: eq(safes.id, safeId),
+            with: {
+                user: true
+            }
+        });
 
-        if (error) return null;
+        if (!safe) return null;
 
-        return {
-            ...safe,
-            userId: safe.user_id,
-            secretWord: safe.secret_word,
-            systemPrompt: safe.system_prompt,
-            defenseLevel: safe.defense_level,
-            user: safe.user
-        };
+        // Drizzle returns camelCase if configured or inferred, assuming schema matches.
+        // If schema fields are camelCase keys mapped to snake_case cols, good.
+        // My schema.ts: 
+        // userId: integer("user_id"), 
+        // secretWord: varchar("secret_word")...
+        // So safe.userId is correct.
+
+        return safe;
     } catch (error) {
         console.error("Error getting safe:", error);
         return null;
@@ -243,23 +224,17 @@ export async function getSafeById(safeId: number) {
 /**
  * Get user's safes
  */
+/**
+ * Get user's safes
+ */
 export async function getUserSafes(userId: number) {
     try {
-        const { data: userSafes, error } = await (supabase
-            .from('safes') as any)
-            .select('*')
-            .eq('user_id', userId)
-            .order('created_at', { ascending: false });
+        const userSafes = await db.query.safes.findMany({
+            where: eq(safes.userId, userId),
+            orderBy: [desc(safes.createdAt)]
+        });
 
-        if (error) throw error;
-
-        return userSafes.map((s: any) => ({
-            ...s,
-            userId: s.user_id,
-            secretWord: s.secret_word,
-            systemPrompt: s.system_prompt,
-            defenseLevel: s.defense_level
-        }));
+        return userSafes;
     } catch (error) {
         console.error("Error getting user safes:", error);
         return [];
@@ -270,40 +245,59 @@ export async function getUserSafes(userId: number) {
  * Get leaderboard (top hackers by successful attacks)
  */
 export async function getLeaderboard(limit = 10) {
+    const { getTopHackers } = await import("./leaderboard");
+    return getTopHackers(limit);
+}
+
+/**
+ * Claim Daily Reward
+ */
+export async function claimDailyReward(userId: number) {
     try {
-        // Redundant with interactions/leaderboard.ts but implementing for compatibility
-        // Use RPC for consistency
-        const { data: topDefenders, error } = await (supabase as any)
-            .rpc('get_top_defenders', { p_limit: limit });
+        return await db.transaction(async (tx) => {
+            const user = await tx.query.users.findFirst({
+                where: eq(users.id, userId)
+            });
 
-        if (error) throw error;
+            if (!user) {
+                return { success: false, message: "Usuário não encontrado." };
+            }
 
-        // Map to match expected return type if necessary, or just return as is
-        // The RPC returns { id, username, tier, blocks }
-        // The previous version returned { id, username, credits, tier, successfulAttacks }
+            const now = new Date();
+            const lastReward = user.lastDailyReward ? new Date(user.lastDailyReward) : null;
+            const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
-        // Warning: The previous version was "Top Credits" (Hackers), but the name 'getLeaderboard' is ambiguous.
-        // In the actions/leaderboard.ts, we have split TopHackers (Credits) and TopDefenders (Blocks).
-        // Let's assume this generic 'getLeaderboard' implies the main one, typically Hackers (Credits).
+            if (lastReward && (now.getTime() - lastReward.getTime() < ONE_DAY_MS)) {
+                const hoursLeft = Math.ceil((ONE_DAY_MS - (now.getTime() - lastReward.getTime())) / (1000 * 60 * 60));
+                return {
+                    success: false,
+                    message: `Recompensa já coletada. Volte em ${hoursLeft} horas.`
+                };
+            }
 
-        // Reverting to fetch Top Hackers (Credits) via standard select, as there is no specific RPC needed for simple sorting.
-        const { data: topUsers, error: usersError } = await (supabase
-            .from('users') as any)
-            .select('id, username, credits, tier')
-            .order('credits', { ascending: false })
-            .limit(limit);
+            // Grant Reward
+            const bonus = GAME_CONFIG.DAILY_REWARD_AMOUNT || 50;
+            const newCredits = user.credits + bonus;
+            const { calculateTier } = await import("@/lib/game-config");
+            const newTier = calculateTier(newCredits);
 
-        if (usersError) throw usersError;
+            await tx.update(users)
+                .set({
+                    credits: newCredits,
+                    lastDailyReward: now,
+                    tier: newTier,
+                    updatedAt: now
+                })
+                .where(eq(users.id, userId));
 
-        return topUsers.map((user: any) => ({
-            id: user.id,
-            username: user.username,
-            credits: user.credits,
-            tier: user.tier,
-            successfulAttacks: 0, // Placeholder
-        }));
+            return {
+                success: true,
+                message: `Recebido ${bonus} créditos diários!`,
+                newCredits
+            };
+        });
     } catch (error) {
-        console.error("Error getting leaderboard:", error);
-        return [];
+        console.error("Error claiming daily reward:", error);
+        return { success: false, message: "Erro ao processar recompensa." };
     }
 }

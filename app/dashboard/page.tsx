@@ -17,6 +17,12 @@ import {
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
+<<<<<<< HEAD
+=======
+import { DailyRewardButton } from "@/components/dashboard/DailyRewardButton";
+import { ShoppingCart } from "lucide-react";
+
+>>>>>>> c9e6572 (chore: fix build errors, update game logic flow documentation and add tests)
 
 // --- Server Components ---
 
@@ -111,10 +117,14 @@ export default async function DashboardPage() {
                                 <ShieldAlert className="w-4 h-4 inline mr-2 mb-1" />
                                 IMPLANTAR DEFESA <span className="opacity-50 text-xs block group-hover:opacity-100 transition-opacity">(-500 Créditos)</span>
                             </Link>
+
+                            <DailyRewardButton userId={user.id} lastClaim={user.lastDailyReward} />
+
                             <Link
                                 href="/shop" // Shop Link
                                 className="block w-full p-4 bg-cyan-900/20 hover:bg-cyan-900/40 border border-cyan-500/30 text-cyan-300 hover:text-cyan-200 font-mono text-sm rounded transition-all text-center group"
                             >
+                                <ShoppingCart className="w-4 h-4 inline mr-2 mb-1" />
                                 MERCADO NEGRO <span className="opacity-50 text-xs block group-hover:opacity-100 transition-opacity">(Comprar Skins)</span>
                             </Link>
                         </div>

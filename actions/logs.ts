@@ -1,6 +1,8 @@
 "use server";
 
-import { supabase } from "@/lib/supabase";
+import { db } from "@/db";
+import { logs } from "@/db/schema";
+import { eq, and, desc, asc } from "drizzle-orm";
 import { getServerSideUser } from "@/lib/auth";
 
 export async function getSafeChatHistory(safeId: number) {
@@ -8,67 +10,45 @@ export async function getSafeChatHistory(safeId: number) {
     if (!user) return [];
 
     try {
-        const { data: history, error } = await (supabase
-            .from('logs') as any)
-            .select('id, input_prompt, ai_response, created_at, success')
-            .eq('attacker_id', user.id)
-            .eq('safe_id', safeId)
-            .order('created_at', { ascending: true }); // Oldest first for chat flow
+        const history = await db.query.logs.findMany({
+            where: and(
+                eq(logs.attackerId, user.id),
+                eq(logs.safeId, safeId)
+            ),
+            orderBy: [asc(logs.createdAt)] // Oldest first for chat flow
+        });
 
-        if (error) {
-            console.error("Error fetching chat history:", error);
-            return [];
-        }
-
-        return history.map((log: any) => ({
-            id: log.id,
-            inputPrompt: log.input_prompt,
-            aiResponse: log.ai_response,
-            createdAt: log.created_at,
-            success: log.success
-        }));
+        return history;
     } catch (error) {
         console.error("Error fetching chat history:", error);
         return [];
     }
 }
 
-
 export async function getDefenseLogs(userId: number, limit = 20) {
     try {
-        const { data: defenseLogs, error } = await (supabase
-            .from('logs' as any) as any)
-            .select(`
-                *,
-                attacker:users!attacker_id(username, tier),
-                safe:safes(id, defense_level, theme)
-            `)
-            .eq('defender_id', userId)
-            .order('created_at', { ascending: false })
-            .limit(limit);
+        const defenseLogs = await db.query.logs.findMany({
+            where: eq(logs.defenderId, userId),
+            with: {
+                attacker: {
+                    columns: {
+                        username: true,
+                        tier: true
+                    }
+                },
+                safe: {
+                    columns: {
+                        id: true,
+                        defenseLevel: true,
+                        theme: true
+                    }
+                }
+            },
+            orderBy: [desc(logs.createdAt)],
+            limit: limit
+        });
 
-        if (error) {
-            console.error("Error fetching defense logs:", error);
-            return [];
-        }
-
-        return defenseLogs.map((log: any) => ({
-            ...log,
-            attackerId: log.attacker_id,
-            defenderId: log.defender_id,
-            safeId: log.safe_id,
-            inputPrompt: log.input_prompt,
-            aiResponse: log.ai_response,
-            creditsSpent: log.credits_spent,
-            styleScore: log.style_score,
-            createdAt: log.created_at,
-            attacker: log.attacker,
-            safe: log.safe ? {
-                id: log.safe.id,
-                defenseLevel: log.safe.defense_level,
-                theme: log.safe.theme || 'dracula'
-            } : null
-        }));
+        return defenseLogs;
     } catch (error) {
         console.error("Error fetching defense logs:", error);
         return [];

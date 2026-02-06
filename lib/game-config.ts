@@ -5,9 +5,9 @@ export const GAME_CONFIG = {
     REWARD_FOR_SUCCESS: 100,
     STYLE_POINTS_MULTIPLIER: 5,
     TIERS: {
-        FREE: {
+        NOVATO: {
             LIMIT: 5000,
-            NAME: "free",
+            NAME: "novato",
         },
         PRO: {
             LIMIT: 15000,
@@ -18,4 +18,14 @@ export const GAME_CONFIG = {
             NAME: "elite",
         },
     },
-} as const;
+};
+
+export function calculateTier(credits: number): string {
+    if (credits >= GAME_CONFIG.TIERS.PRO.LIMIT) {
+        return GAME_CONFIG.TIERS.ELITE.NAME;
+    }
+    if (credits >= GAME_CONFIG.TIERS.NOVATO.LIMIT) {
+        return GAME_CONFIG.TIERS.PRO.NAME;
+    }
+    return GAME_CONFIG.TIERS.NOVATO.NAME;
+}

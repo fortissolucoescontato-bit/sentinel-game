@@ -1,6 +1,8 @@
 "use server";
 
-import { supabase } from "@/lib/supabase";
+import { db } from "@/db";
+import { users, logs } from "@/db/schema";
+import { desc, eq, sql, inArray, count, gt } from "drizzle-orm";
 
 /**
  * Get top richest hackers (Offensive Leaderboard)
@@ -8,23 +10,24 @@ import { supabase } from "@/lib/supabase";
  */
 export async function getTopHackers(limit = 10) {
     try {
-        const { data: topUsers, error } = await (supabase
-            .from('users') as any)
-            .select('id, username, credits, tier, style_points')
-            .order('credits', { ascending: false })
-            .limit(limit);
+        const topUsers = await db.query.users.findMany({
+            orderBy: [desc(users.credits)],
+            limit: limit,
+            columns: {
+                id: true,
+                username: true,
+                credits: true,
+                tier: true,
+                stylePoints: true
+            }
+        });
 
-        if (error) {
-            console.error("Error fetching top hackers:", error);
-            return [];
-        }
-
-        return topUsers.map((u: any) => ({
+        return topUsers.map(u => ({
             id: u.id,
             username: u.username,
             credits: u.credits,
             tier: u.tier,
-            stylePoints: u.style_points
+            stylePoints: u.stylePoints
         }));
     } catch (error) {
         console.error("Error fetching top hackers:", error);
@@ -38,48 +41,44 @@ export async function getTopHackers(limit = 10) {
  */
 export async function getTopDefenders(limit = 10) {
     try {
-        // Fetch all failed logs to aggregate
-        const { data: logs, error } = await (supabase
-            .from('logs') as any)
-            .select('defender_id')
-            .eq('success', false);
+        // Group by defender_id and count failures
+        const topDefenders = await db
+            .select({
+                defenderId: logs.defenderId,
+                blocks: sql<number>`count(*)::int`,
+            })
+            .from(logs)
+            .where(eq(logs.success, false))
+            .groupBy(logs.defenderId)
+            .orderBy(sql`count(*) desc`)
+            .limit(limit);
 
-        if (error) throw error;
+        if (topDefenders.length === 0) return [];
 
-        // Group by defender_id
-        const counts: Record<number, number> = {};
-        logs.forEach((log: any) => {
-            const did = log.defender_id;
-            counts[did] = (counts[did] || 0) + 1;
+        const defenderIds = topDefenders.map(d => d.defenderId);
+
+        const defenders = await db.query.users.findMany({
+            where: inArray(users.id, defenderIds),
+            columns: {
+                id: true,
+                username: true,
+                tier: true
+            }
         });
 
-        // Sort by count desc
-        const sortedDefenders = Object.entries(counts)
-            .sort(([, a], [, b]) => b - a)
-            .slice(0, limit);
-
-        // Fetch user details for these IDs
-        const topDefenderIds = sortedDefenders.map(([id]) => parseInt(id));
-
-        if (topDefenderIds.length === 0) return [];
-
-        const { data: users, error: usersError } = await (supabase
-            .from('users') as any)
-            .select('id, username, tier')
-            .in('id', topDefenderIds);
-
-        if (usersError) throw usersError;
-
         // Merge count with user data
-        const result = users.map((u: any) => ({
-            id: u.id,
-            username: u.username,
-            tier: u.tier,
-            blocks: counts[u.id] || 0
-        }));
+        const result = defenders.map(u => {
+            const stats = topDefenders.find(d => d.defenderId === u.id);
+            return {
+                id: u.id,
+                username: u.username,
+                tier: u.tier,
+                blocks: stats ? stats.blocks : 0
+            };
+        });
 
-        // Re-sort because database 'in' query doesn't guarantee order
-        return result.sort((a: any, b: any) => b.blocks - a.blocks);
+        // Re-sort
+        return result.sort((a, b) => b.blocks - a.blocks);
 
     } catch (error) {
         console.error("Error fetching top defenders:", error);
@@ -92,24 +91,22 @@ export async function getTopDefenders(limit = 10) {
  */
 export async function getDashboardStats(userId: number) {
     try {
-        const { data: attackLogs, error: attackError } = await (supabase
-            .from('logs') as any)
-            .select('success')
-            .eq('attacker_id', userId);
+        const attackLogs = await db.query.logs.findMany({
+            where: eq(logs.attackerId, userId),
+            columns: { success: true }
+        });
 
-        const { data: defenseLogs, error: defenseError } = await (supabase
-            .from('logs') as any)
-            .select('success')
-            .eq('defender_id', userId);
+        const defenseLogs = await db.query.logs.findMany({
+            where: eq(logs.defenderId, userId),
+            columns: { success: true }
+        });
 
-        if (attackError || defenseError) throw new Error("Error fetching stats");
-
-        const successfulAttacks = attackLogs?.filter((l: any) => l.success).length || 0;
-        const failedAttacks = attackLogs?.filter((l: any) => !l.success).length || 0;
+        const successfulAttacks = attackLogs?.filter(l => l.success).length || 0;
+        const failedAttacks = attackLogs?.filter(l => !l.success).length || 0;
         const totalAttacks = attackLogs?.length || 0;
 
-        const successfulDefenses = defenseLogs?.filter((l: any) => !l.success).length || 0; // Success for defender means log.success is FALSE
-        const failedDefenses = defenseLogs?.filter((l: any) => l.success).length || 0;
+        const successfulDefenses = defenseLogs?.filter(l => !l.success).length || 0; // Success for defender means log.success is FALSE
+        const failedDefenses = defenseLogs?.filter(l => l.success).length || 0;
         const totalDefense = defenseLogs?.length || 0;
 
         return {
@@ -138,12 +135,25 @@ export async function getDashboardStats(userId: number) {
 /**
  * Get user global rank
  */
-export async function getUserRank(userId: number) {
+export async function getUserRank(userId: number): Promise<number> {
     try {
-        const { data, error } = await (supabase as any).rpc('get_user_rank', { p_user_id: userId });
+        // Rank by Credits (Hackers)
+        // Count how many users have MORE credits than this user
+        // Using subquery or just counting
+        const user = await db.query.users.findFirst({
+            where: eq(users.id, userId),
+            columns: { credits: true }
+        });
 
-        if (error) throw error;
-        return data as number;
+        if (!user) return 0;
+
+        // Let's use count
+        const countResult = await db.select({ value: count() })
+            .from(users)
+            .where(gt(users.credits, user.credits));
+
+        return countResult[0].value + 1; // Rank is 1 + number of people ahead
+
     } catch (error) {
         console.error('Error fetching user rank:', error);
         return 0;

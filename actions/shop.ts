@@ -1,6 +1,8 @@
 "use server";
 
-import { supabase } from "@/lib/supabase";
+import { db } from "@/db";
+import { users } from "@/db/schema";
+import { eq } from "drizzle-orm";
 import { getServerSideUser } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { THEMES, ThemeId } from "@/lib/themes";
@@ -8,7 +10,10 @@ import { THEMES, ThemeId } from "@/lib/themes";
 export async function buyTheme(themeId: string) {
     const user = await getServerSideUser();
     if (!user) return { error: "Não logado" };
+    return buyThemeCore(user, themeId);
+}
 
+export async function buyThemeCore(user: any, themeId: string) {
     const theme = THEMES[themeId as ThemeId];
     if (!theme) return { error: "Tema inválido" };
 
@@ -21,28 +26,28 @@ export async function buyTheme(themeId: string) {
     if (user.credits < theme.priceCredits) {
         return { error: `Créditos insuficientes. Necessário ${theme.priceCredits} cr.` };
     }
-    if (user.stylePoints < theme.priceStylePoints) {
+    if ((user.stylePoints || 0) < theme.priceStylePoints) {
         return { error: `Pontos de Estilo insuficientes. Necessário ${theme.priceStylePoints} PE.` };
     }
 
     try {
-        // Sequential update to replace transaction
         const updatedThemes = [...user.unlockedThemes, themeId];
 
-        const { error: updateError } = await (supabase as any)
-            .from('users')
-            .update({
+        await db.update(users)
+            .set({
                 credits: user.credits - theme.priceCredits,
-                style_points: user.stylePoints - theme.priceStylePoints,
-                unlocked_themes: updatedThemes,
-                updated_at: new Date().toISOString(),
+                stylePoints: (user.stylePoints || 0) - theme.priceStylePoints,
+                unlockedThemes: updatedThemes,
+                updatedAt: new Date(),
             })
-            .eq('id', user.id);
+            .where(eq(users.id, user.id));
 
-        if (updateError) throw updateError;
+        // revalidatePath and other server-only calls should be guarded or in the main export
+        try {
+            revalidatePath("/shop");
+            revalidatePath("/dashboard");
+        } catch (e) { }
 
-        revalidatePath("/shop");
-        revalidatePath("/dashboard");
         return { success: true };
     } catch (error) {
         console.error("Buy theme error:", error);
@@ -53,22 +58,28 @@ export async function buyTheme(themeId: string) {
 export async function equipTheme(themeId: string) {
     const user = await getServerSideUser();
     if (!user) return { error: "Não logado" };
+    return equipThemeCore(user, themeId);
+}
 
+export async function equipThemeCore(user: any, themeId: string) {
     if (!user.unlockedThemes.includes(themeId)) {
         return { error: "Você não possui este tema" };
     }
 
     try {
-        const { error: updateError } = await (supabase as any)
-            .from('users')
-            .update({ current_theme: themeId })
-            .eq('id', user.id);
+        await db.update(users)
+            .set({
+                currentTheme: themeId,
+                updatedAt: new Date()
+            })
+            .where(eq(users.id, user.id));
 
-        if (updateError) throw updateError;
+        try {
+            revalidatePath("/shop");
+            revalidatePath("/dashboard");
+            revalidatePath("/game");
+        } catch (e) { }
 
-        revalidatePath("/shop");
-        revalidatePath("/dashboard");
-        revalidatePath("/game"); // Important for HackTerminal
         return { success: true };
     } catch (error) {
         console.error("Equip theme error:", error);

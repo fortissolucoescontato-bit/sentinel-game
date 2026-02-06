@@ -14,20 +14,22 @@ export function UserStats({ user, successfulAttacks = 0, totalAttacks = 0 }: Use
     const successRate = totalAttacks > 0 ? (successfulAttacks / totalAttacks) * 100 : 0;
 
     const getTierLimit = (tier: string) => {
-        if (tier === GAME_CONFIG.TIERS.PRO.NAME) return GAME_CONFIG.TIERS.PRO.LIMIT;
-        if (tier === GAME_CONFIG.TIERS.ELITE.NAME) return GAME_CONFIG.TIERS.ELITE.LIMIT;
-        return GAME_CONFIG.TIERS.FREE.LIMIT;
+        const t = tier.toLowerCase();
+        if (t === GAME_CONFIG.TIERS.PRO.NAME) return GAME_CONFIG.TIERS.PRO.LIMIT;
+        if (t === GAME_CONFIG.TIERS.ELITE.NAME) return GAME_CONFIG.TIERS.ELITE.LIMIT;
+        return GAME_CONFIG.TIERS.NOVATO.LIMIT;
     };
 
     const tierLimit = getTierLimit(user.tier);
 
     const getTierColor = (tier: string) => {
+        const t = tier.toLowerCase();
         const colors = {
-            free: "from-slate-600 to-slate-800",
+            novato: "from-slate-600 to-slate-800",
             pro: "from-cyan-600 to-cyan-800",
             elite: "from-purple-600 to-purple-800",
         };
-        return colors[tier as keyof typeof colors] || colors.free;
+        return colors[t as keyof typeof colors] || colors.novato;
     };
 
     return (
